@@ -8,11 +8,21 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 #include "Arduino.h"
+
+#include "input.h"
+#include "action.h"
+
 #define INTERVAL 1250 //The blinking interval
 
-uint8_t calcLedState(uint32_t currentMillis, uint8_t ledState);
 void setup() ;
-void loop() ;
+void loop();
 
+/*
+struct inputEvent {
+  int id;
+  int action;
+  string data;
+} ;
+*/
 
 #endif /* MAIN_H_ */

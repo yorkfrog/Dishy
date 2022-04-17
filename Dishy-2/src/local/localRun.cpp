@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	printf("Init local run...\n");
 	setup();
 	printf("\nStart loop for local run...\n");
-	loop();
+	while (1) loop();
 	printf("\nExit local run.");
 
 

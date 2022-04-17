@@ -1,43 +1,10 @@
 /*
- * main.cpp
- *
  *  Created on: Nov 27, 2015
  *      Author: jan
  */
 
-#include "main.h"
-#include "stdio.h"
+#include "action.h"
 
-#include "Arduino.h"
-
-void setup() {
-	pinMode(LED_BUILTIN, OUTPUT);
-}
-
-//inputEvent iEvent;
-char input = '\0';
-int actionResult = 0;
-
-void loop() {
-	input = readInput();
-
-	// ***
-	// doActionOnInput is dependent on all action functions and we can't test the
-	// result of the actionFunctions or the result of the doAction... function.
-	// Also, likely, action functions will have side effects (hardware...).
-	//
-	// p0erhaps this is where a Action class could created and an array of Actions could
-	// be passed in to the doAction function to operate on.
-
-	actionResult = doActionOnInput(input);
-
-	printf("Action result:%d\n", actionResult);
-
-}
-
-
-
-/*
 //===========================
 // Do Actions / OUTPUTS
 //===========================
@@ -64,6 +31,7 @@ int doActionDefault(char input) {
 }
 
 int doActionOnInput(char input) {
+	int result = 0;
 	switch (input) {
 	case '1':
 		result = doActionButton1(input);
@@ -84,4 +52,3 @@ int doActionOnInput(char input) {
 	return result;
 }
 
-*/
