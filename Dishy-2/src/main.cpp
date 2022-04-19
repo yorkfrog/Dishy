@@ -4,7 +4,8 @@
  *  Created on: Nov 27, 2015
  *      Author: jan
  */
-
+#include <iostream>
+using namespace std;
 #include "main.h"
 #include "stdio.h"
 
@@ -16,9 +17,9 @@ void setup() {
 
 //inputEvent iEvent;
 char input = '\0';
-int actionResult = 0;
 
 void loop() {
+
 	input = readInput();
 
 	// ***
@@ -29,59 +30,94 @@ void loop() {
 	// p0erhaps this is where a Action class could created and an array of Actions could
 	// be passed in to the doAction function to operate on.
 
-	actionResult = doActionOnInput(input);
+	ActionEvent inputEvent = getEventForInput(input);
 
-	printf("Action result:%d\n", actionResult);
+	Action *pAction = NULL;
+
+	if (inputEvent.getId() == invalidEvent && inputEvent.getData() == 'x') {
+		cout << "EXIT 1 -- ACTION INSTANCE COUNT == [" << Action::instanceCount
+				<< endl;
+		if (Action::instanceCount > 0) {
+			delete pAction;
+		}
+		cout << "EXIT 2 -- ACTION INSTANCE COUNT == [" << Action::instanceCount
+				<< endl;
+		exit(0);
+
+	} else if (inputEvent.getId() == invalidEvent) {
+		printf("Invalid input [%c]\n", inputEvent.getData());
+
+	} else {
+
+		pAction = getAction(inputEvent);
+
+		cout << "Action RUN ..." << endl;
+
+		int actionResult = pAction->run();
+		delete pAction;
+
+		printf("Action result:[%d]\n", actionResult);
+
+	}
+
+	if (Action::instanceCount > 0) {
+		cout << "**** MEMORY LEAK - ACTION INSTANCE COUNT should be Zero, but == [" << Action::instanceCount << endl;
+	}
 
 }
-
-
 
 /*
-//===========================
-// Do Actions / OUTPUTS
-//===========================
-int doActionButton1(char input) {
-	printf("\nDoing action ONE on [%c].\n", input);
-	return 1;
-}
-int doActionButton2(char input) {
-	printf("\nDoing action TWO on [%c].\n", input);
-	return 1;
-}
-int doActionButton3(char input) {
-	printf("\nDoing action THREE on [%c].\n", input);
-	return 1;
-}
-int doActionButton4(char input) {
-	printf("\nDoing action FOUR on [%c].\n", input);
-	return 1;
-}
+ Action getAction(ActionEvent &event) {
+ cout << "   *** 021" << endl;
+ return Action(&event);
+ }
 
-int doActionDefault(char input) {
-	printf("\nNO action for [%c].\n", input);
-	return 0;
-}
+ */
 
-int doActionOnInput(char input) {
-	switch (input) {
-	case '1':
-		result = doActionButton1(input);
+Action* getAction(ActionEvent &event) {
+
+	Action *newAction = NULL;
+	Action* singleAction = NULL;
+	int result = 0;
+	switch (event.getId()) {
+	case btn1pressEvent:
+		newAction = new DisplayAction(1, &event);
 		break;
-	case '2':
-		result = doActionButton2(input);
+	case btn2pressEvent:
+		singleAction = new DisplayAction(2, &event);
+		newAction = new ActionGroup(singleAction);
 		break;
-	case '3':
-		result = doActionButton3(input);
+	case btn3pressEvent:
+		newAction = new DisplayAction(3, &event);
 		break;
-	case '4':
-		result = doActionButton4(input);
+	case btn4pressEvent:
+		newAction = new DisplayAction(4, &event);
 		break;
 	default:
-		result = doActionDefault(input);
+		newAction = new ActionGroup(&event);
+		cout << "NEW ACTION:" << newAction->toString();
 		break;
 	}
-	return result;
+	return newAction;
 }
 
-*/
+ActionEvent getEventForInput(char input) {
+	int eventType = invalidEvent;
+	switch (input) {
+	case '1':
+		eventType = btn1pressEvent;
+		break;
+	case '2':
+		eventType = btn2pressEvent;
+		break;
+	case '3':
+		eventType = btn3pressEvent;
+		break;
+	case '4':
+		eventType = btn4pressEvent;
+		break;
+	default:
+		break;
+	}
+	return ActionEvent(eventType, input);
+}
