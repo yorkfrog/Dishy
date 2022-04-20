@@ -14,19 +14,12 @@
 #include <sstream>
 using namespace std;
 
-ActionEvent::ActionEvent(): _id(-1), _data('-') {
-#ifdef DEBUG
-	cout << "   # DEF ActionEvent contructor (" << this << "), id:" << _id << ",data:" << _data << endl;
-#endif
-}
-
 ActionEvent::ActionEvent(int8_t id, char data): _id(id), _data(data) {
 #ifdef DEBUG
 	cout << "   # ActionEvent contructor (" << this << "), id:" << _id << ",data:" << _data << endl;
 #endif
 //	_id = id;
 //	_data = data;
-
 }
 
 ActionEvent::ActionEvent(const ActionEvent &other): _id(other._id), _data(other._data) {

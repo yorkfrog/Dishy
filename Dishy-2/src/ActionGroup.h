@@ -10,17 +10,17 @@
 #ifndef ACTIONGROUP_H_
 #define ACTIONGROUP_H_
 
-#include "Action.h"
 #include "ActionEvent.h"
+#include "BaseAction.h"
 
-class ActionGroup: public Action {
+class ActionGroup: public BaseAction {
 private:
-	Action* _pTheAction;
+	BaseAction* _pTheAction;
 
 
 public:
 	ActionGroup();
-	ActionGroup::ActionGroup(Action* action);
+	ActionGroup::ActionGroup(BaseAction* action);
 
 	ActionGroup(ActionEvent* event);
 	ActionGroup::ActionGroup(const ActionGroup &other);
@@ -28,7 +28,7 @@ public:
 	virtual ~ActionGroup();
 
 	virtual int run();
-	void addAction(Action* action);
+	void addAction(BaseAction* action);
 
 };
 

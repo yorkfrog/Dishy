@@ -7,8 +7,9 @@
 //#define DEBUG
 
 
+#include "BaseAction.h"
+
 #include "environment.h"
-#include "Action.h"
 #include "ActionEvent.h"
 
 #include <iostream>
@@ -20,50 +21,66 @@ Action::Action() {
 
 }
 */
-int Action::instanceCount = 0;
+int BaseAction::instanceCount = 0;
 
-Action::Action(ActionEvent* event): _event(event) {
+BaseAction::BaseAction(ActionEvent* event) {
 	instanceCount++;
+	_isValid = (event == NULL)?false:true;
+	_event = event;
+
 #ifdef DEBUG
 	cout << "   # ACTION contructor (" << this << "), id:" << (int)_event->getId() << endl;
 #endif
 }
 
-Action::Action(const Action& other) {
+BaseAction::BaseAction(const BaseAction& other) {
 	instanceCount++;
 #ifdef DEBUG
 	cout << "   # ACTION COPY contructor, from (" << &other << "), to (" << this << "), id:" << (int)other._event->getId() << endl;
 #endif
 	_event = other._event;
-
+	_isValid = other._isValid;
 
 }
 
-Action::~Action() {
+BaseAction::~BaseAction() {
 	instanceCount--;
 #ifdef DEBUG
 	cout << "   # ACTION destructor on (" << this << "::[" << instanceCount << "]), id:" << _event->getId() << endl;
 #endif
 }
 
-string Action::toString() const {
+string BaseAction::toString() const {
 	stringstream ss ;
-	ss << "Action[event id:" << (int)_event->getId() << "]";
+	if (_isValid) {
+		ss << "Action[event id:" << (int)_event->getId() << "]";
+	} else {
+		ss << "Action[event id:null, isValid:"  << _isValid << "]";
+	}
 	return ss.str();
 }
 
+bool BaseAction::isValid() const {
+	return _isValid;
+}
 
 #if defined LOCAL_ENV
 
-int Action::run() {
-	cout << "run Action for " << _event->toString() << endl;
+int BaseAction::run() {
+	cout << "run Action for " << (_isValid?_event->toString():"INVALID") << endl;
 
+	if (! _isValid) {
+		// invalid
+		return -1;
+	}
+
+	// do run()
 	return 0;
 }
 
 #elif defined MCU_ENV
 
-int Action::run() {
+int BaseAction::run() {
 	cout << "run **MCU** Action for " << _event->toString() << endl;
 
 	return 0;

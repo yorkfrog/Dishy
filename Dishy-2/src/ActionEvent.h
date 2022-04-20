@@ -13,7 +13,6 @@ using namespace std;
 
 class ActionEvent {
 public:
-	ActionEvent();
 	ActionEvent::ActionEvent(const ActionEvent &other);
 	ActionEvent(int8_t id, char data);
 	virtual ~ActionEvent();

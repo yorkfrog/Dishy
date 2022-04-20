@@ -5,13 +5,13 @@
  *      Author: colin
  */
 
-#ifndef NULLACTION_H_
-#define NULLACTION_H_
+#ifndef NULLBASEACTION_H_
+#define NULLBASEACTION_H_
 
-#include "Action.h"
 #include "ActionEvent.h"
+#include "BaseAction.h"
 
-class NullAction: public Action {
+class NullAction: public BaseAction {
 public:
 	NullAction(ActionEvent* event);
 	NullAction::NullAction(const NullAction &other);
@@ -21,4 +21,4 @@ public:
 	virtual int run();
 };
 
-#endif /* NULLACTION_H_ */
+#endif /* NULLBASEACTION_H_ */

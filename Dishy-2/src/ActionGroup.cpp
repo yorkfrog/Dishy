@@ -4,7 +4,7 @@
  *  Created on: 19 Apr 2022
  *      Author: colin
  */
-#define DEBUG
+//#define DEBUG
 
 #include <iostream>
 using namespace std;
@@ -12,15 +12,15 @@ using namespace std;
 #include "ActionGroup.h"
 
 ActionGroup::ActionGroup() :
-		Action(NULL) {
+		BaseAction(NULL) {
 #ifdef DEBUG
 	cout << "   # DEF ActionGroup contructor (" << this << ")" << endl;
 #endif
-	_pTheAction = this;
+	_pTheAction = NULL;
 }
 
-ActionGroup::ActionGroup(Action *action) :
-		Action(NULL) {
+ActionGroup::ActionGroup(BaseAction* action) :
+		BaseAction(NULL) {
 #ifdef DEBUG
 	cout << "   # ActionGroup A contructor (" << this << ")" << endl;
 #endif
@@ -28,7 +28,7 @@ ActionGroup::ActionGroup(Action *action) :
 }
 
 ActionGroup::ActionGroup(ActionEvent *event) :
-		Action(event) {
+		BaseAction(event) {
 #ifdef DEBUG
 	cout << "   # ActionGroup AE contructor (" << this << ")" << endl;
 #endif
@@ -36,7 +36,7 @@ ActionGroup::ActionGroup(ActionEvent *event) :
 }
 
 ActionGroup::ActionGroup(const ActionGroup &other) :
-		Action(other) {
+		BaseAction(other) {
 #ifdef DEBUG
 	cout << "   # ActionGroup  COPY contructor, from (" << &other << "), to ("
 			<< this << ")" << endl;
@@ -49,10 +49,12 @@ ActionGroup::~ActionGroup() {
 #ifdef DEBUG
 	cout << "   # ActionGroup destructor on (" << this << ")" << endl;
 #endif
-	delete _pTheAction;
+	if (_pTheAction != NULL) {
+		delete _pTheAction;
+	}
 }
 
-void ActionGroup::addAction(Action *action) {
+void ActionGroup::addAction(BaseAction *action) {
 	if (action != NULL) {
 		_pTheAction = action;
 	}

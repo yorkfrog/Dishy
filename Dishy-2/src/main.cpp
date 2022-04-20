@@ -32,15 +32,15 @@ void loop() {
 
 	ActionEvent inputEvent = getEventForInput(input);
 
-	Action *pAction = NULL;
+	BaseAction *pAction = NULL;
 
 	if (inputEvent.getId() == invalidEvent && inputEvent.getData() == 'x') {
-		cout << "EXIT 1 -- ACTION INSTANCE COUNT == [" << Action::instanceCount
+		cout << "EXIT 1 -- ACTION INSTANCE COUNT == [" << BaseAction::instanceCount
 				<< endl;
-		if (Action::instanceCount > 0) {
+		if (BaseAction::instanceCount > 0) {
 			delete pAction;
 		}
-		cout << "EXIT 2 -- ACTION INSTANCE COUNT == [" << Action::instanceCount
+		cout << "EXIT 2 -- ACTION INSTANCE COUNT == [" << BaseAction::instanceCount
 				<< endl;
 		exit(0);
 
@@ -60,8 +60,8 @@ void loop() {
 
 	}
 
-	if (Action::instanceCount > 0) {
-		cout << "**** MEMORY LEAK - ACTION INSTANCE COUNT should be Zero, but == [" << Action::instanceCount << endl;
+	if (BaseAction::instanceCount > 0) {
+		cout << "**** MEMORY LEAK - ACTION INSTANCE COUNT should be Zero, but == [" << BaseAction::instanceCount << endl;
 	}
 
 }
@@ -74,10 +74,10 @@ void loop() {
 
  */
 
-Action* getAction(ActionEvent &event) {
+BaseAction* getAction(ActionEvent &event) {
 
-	Action *newAction = NULL;
-	Action* singleAction = NULL;
+	BaseAction *newAction = NULL;
+	BaseAction* singleAction = NULL;
 	int result = 0;
 	switch (event.getId()) {
 	case btn1pressEvent:

@@ -9,15 +9,15 @@
 #include <iostream>
 using namespace std;
 
-#include "NullAction.h"
+#include "NullBaseAction.h"
 
-NullAction::NullAction(ActionEvent* event): Action(event) {
+NullAction::NullAction(ActionEvent* event): BaseAction(event) {
 #ifdef DEBUG
 	cout << "   # NullAction contructor (" << this << "), id:" << event->getId() << endl;
 #endif
 }
 
-NullAction::NullAction(const NullAction &other): Action(other)  {
+NullAction::NullAction(const NullAction &other): BaseAction(other)  {
 #ifdef DEBUG
 	cout << "   # NullAction  COPY contructor, from (" << &other << "), to (" << this << ")" << endl;
 #endif

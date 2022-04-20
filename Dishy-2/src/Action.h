@@ -8,38 +8,17 @@
 #ifndef ACTION_H_
 #define ACTION_H_
 
-#include <iostream>
-using namespace std;
-
 #include "ActionEvent.h"
 
 
 class Action {
 public:
-	static int instanceCount;
-
-public:
-	//Action();
-	Action(ActionEvent* event) ;
-	Action::Action(const Action &other) ;
-
-	virtual ~Action() ;
-	virtual int run();
-	virtual string toString() const ;
-
-private:
-	ActionEvent* _event;
+  // virtual destructor is required if the object may
+  // be deleted through a pointer to Serializable
+	virtual ~Action() {}
+	virtual int run() = 0;
+	virtual string toString() const = 0;
+	virtual bool isValid() const = 0;
 };
-
-/*
-class FlashLedAction:public Action
-{
-	FlashLedAction();
-	int run();
-};
-*/
-
-
-
 
 #endif /* ACTION_H_ */

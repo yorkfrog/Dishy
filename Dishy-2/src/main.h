@@ -16,9 +16,9 @@
 #include "actions.h"
 #include "input.h"
 #include "ActionEvent.h"
-#include "Action.h"
 #include "ActionGroup.h"
-#include "DisplayAction.h"
+#include "BaseAction.h"
+#include "DisplayBaseAction.h"
 
 #define INTERVAL 1250 //The blinking interval
 
@@ -28,7 +28,7 @@ ActionEvent getEventForInput(char input);
 int doAction( ActionEvent &event) ;
 
 //void getAction(Action* actionToAssign, ActionEvent &event) ;
-Action*  getAction(ActionEvent &event);
+BaseAction*  getAction(ActionEvent &event);
 //Action getAction(ActionEvent &event) ;
 
 enum eventId{invalidEvent=-1, btn1pressEvent=1,btn2pressEvent=2,btn3pressEvent=3,btn4pressEvent=4};

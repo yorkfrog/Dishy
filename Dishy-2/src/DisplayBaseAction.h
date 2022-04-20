@@ -5,13 +5,13 @@
  *      Author: colin
  */
 
-#ifndef DISPLAYACTION_H_
-#define DISPLAYACTION_H_
+#ifndef DISPLAYBASEACTION_H_
+#define DISPLAYBASEACTION_H_
 
-#include "Action.h"
 #include "ActionEvent.h"
+#include "BaseAction.h"
 
-class DisplayAction: public Action {
+class DisplayAction: public BaseAction {
 private:
 	int _buttonNumber;
 
@@ -27,4 +27,4 @@ public:
 	int getButtonNumber() const ;
 };
 
-#endif /* DISPLAYACTION_H_ */
+#endif /* DISPLAYBASEACTION_H_ */

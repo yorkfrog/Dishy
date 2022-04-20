@@ -10,10 +10,10 @@
 #include <sstream>
 using namespace std;
 
-#include "DisplayAction.h"
+#include "DisplayBaseAction.h"
 
 DisplayAction::DisplayAction(int buttonNum, ActionEvent *event):
-		Action(event)
+		BaseAction(event)
 
 {
 #ifdef DEBUG
@@ -24,7 +24,7 @@ DisplayAction::DisplayAction(int buttonNum, ActionEvent *event):
 }
 
 DisplayAction::DisplayAction(const DisplayAction &other) :
-		Action(other) {
+		BaseAction(other) {
 #ifdef DEBUG
 	cout << "   # DisplayAction  COPY contructor, from (" << &other
 			<< "), to (" << this << ")" << endl;
@@ -50,7 +50,7 @@ int DisplayAction::getButtonNumber() const {
 
 string DisplayAction::toString() const {
 	stringstream ss ;
-	ss << Action::toString() << "[btn #:" << _buttonNumber << "]";
+	ss << BaseAction::toString() << "[btn #:" << _buttonNumber << "]";
 	return ss.str();
 }
 
