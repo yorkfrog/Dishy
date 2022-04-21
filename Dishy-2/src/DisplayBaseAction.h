@@ -8,15 +8,15 @@
 #ifndef DISPLAYBASEACTION_H_
 #define DISPLAYBASEACTION_H_
 
-#include "ActionEvent.h"
 #include "BaseAction.h"
+#include "InputEvent.h"
 
 class DisplayAction: public BaseAction {
 private:
 	int _buttonNumber;
 
 public:
-	DisplayAction(int buttonNum, ActionEvent* event);
+	DisplayAction(int buttonNum, InputEvent* event);
 	DisplayAction::DisplayAction(const DisplayAction &other);
 
 	virtual ~DisplayAction();

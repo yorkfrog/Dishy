@@ -12,7 +12,7 @@
 using namespace std;
 
 #include "Action.h"
-#include "ActionEvent.h"
+#include "InputEvent.h"
 
 
 class BaseAction: public virtual Action  {
@@ -21,18 +21,18 @@ public:
 
 public:
 	//Action();
-	BaseAction(ActionEvent* event) ;
+	BaseAction(InputEvent* event) ;
 	BaseAction::BaseAction(const BaseAction &other) ;
 
 	virtual ~BaseAction() ;
-	virtual int run();
+	virtual int run() =0;
 	virtual string toString() const ;
 
-	bool isValid() const;
+protected:
+	InputEvent* getEvent();
 
 private:
-	ActionEvent* _event;
-	bool _isValid;
+	InputEvent* _event;
 
 };
 

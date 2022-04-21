@@ -7,15 +7,16 @@
 #define ACTIONS_H_
 
 #include "stdio.h"
-#include "ActionEvent.h"
 
-int doActionButton1(ActionEvent* event);
-int doActionButton2(ActionEvent* event);
-int doActionButton3(ActionEvent* event);
-int doActionButton4(ActionEvent* event);
+#include "InputEvent.h"
+
+int doActionButton1(InputEvent* event);
+int doActionButton2(InputEvent* event);
+int doActionButton3(InputEvent* event);
+int doActionButton4(InputEvent* event);
 
 
-int doActionDefault(ActionEvent* event);
+int doActionDefault(InputEvent* event);
 
 
 

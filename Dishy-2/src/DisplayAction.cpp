@@ -12,7 +12,7 @@ using namespace std;
 
 #include "DisplayBaseAction.h"
 
-DisplayAction::DisplayAction(int buttonNum, ActionEvent *event):
+DisplayAction::DisplayAction(int buttonNum, InputEvent *event):
 		BaseAction(event)
 
 {
@@ -40,7 +40,7 @@ DisplayAction::~DisplayAction() {
 }
 
 int DisplayAction::run() {
-	cout << "run DisplayAction for " << this->toString() << endl;
+	cout << "run DisplayAction::" << this->toString() << endl;
 	return 0;
 }
 

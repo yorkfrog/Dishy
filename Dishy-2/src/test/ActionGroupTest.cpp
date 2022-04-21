@@ -1,7 +1,7 @@
 
 #ifdef UNITTEST
 #include "gtest.h"
-#include "ActionEvent.h"
+#include "../InputEvent.h"
 #include "../BaseAction.h"
 #include "../ActionGroup.h"
 #include "main.h"
@@ -12,8 +12,8 @@ TEST(ActionGroupSuite, testActionGroupClass) {
 
 	int id = 1;
 	char data = 'c';
-	ActionEvent event = ActionEvent(id, data);
-	BaseAction action = BaseAction(&event);
+	InputEvent event = InputEvent(id, data);
+//	BaseAction action = BaseAction(&event);
 
 //	ActionGroup actionGrp = ActionGroup(&action);
 

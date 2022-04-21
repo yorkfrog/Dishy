@@ -8,8 +8,8 @@
 #ifndef ACTION_H_
 #define ACTION_H_
 
-#include "ActionEvent.h"
-
+#include <iostream>
+using namespace std;
 
 class Action {
 public:
@@ -18,7 +18,6 @@ public:
 	virtual ~Action() {}
 	virtual int run() = 0;
 	virtual string toString() const = 0;
-	virtual bool isValid() const = 0;
 };
 
 #endif /* ACTION_H_ */

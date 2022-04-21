@@ -9,43 +9,36 @@ using namespace std;
 #include "main.h"
 #include "stdio.h"
 
+// enable NDEBUG to disable assert()
+#define NDEBUG
+#include <assert.h>     /* assert */
+
+
 #include "Arduino.h"
+
+void doExit(Action* pAction);
+void assertNoMemoryLeak();
 
 void setup() {
 	pinMode(LED_BUILTIN, OUTPUT);
 }
 
-//inputEvent iEvent;
-char input = '\0';
 
 void loop() {
 
+	char input = '\0';
+	Action *pAction = NULL;
+
 	input = readInput();
 
-	// ***
-	// doActionOnInput is dependent on all action functions and we can't test the
-	// result of the actionFunctions or the result of the doAction... function.
-	// Also, likely, action functions will have side effects (hardware...).
-	//
-	// p0erhaps this is where a Action class could created and an array of Actions could
-	// be passed in to the doAction function to operate on.
+	InputEvent inputEvent = getEventForInput(input);
 
-	ActionEvent inputEvent = getEventForInput(input);
 
-	BaseAction *pAction = NULL;
+	if (inputEvent.getId() == InputEvent::invalidEvent && inputEvent.getData() == 'x') {
+		doExit(pAction);
 
-	if (inputEvent.getId() == invalidEvent && inputEvent.getData() == 'x') {
-		cout << "EXIT 1 -- ACTION INSTANCE COUNT == [" << BaseAction::instanceCount
-				<< endl;
-		if (BaseAction::instanceCount > 0) {
-			delete pAction;
-		}
-		cout << "EXIT 2 -- ACTION INSTANCE COUNT == [" << BaseAction::instanceCount
-				<< endl;
-		exit(0);
-
-	} else if (inputEvent.getId() == invalidEvent) {
-		printf("Invalid input [%c]\n", inputEvent.getData());
+	} else if (inputEvent.getId() == InputEvent::invalidEvent) {
+		cout << "Invalid input " << inputEvent.getData() << endl;;
 
 	} else {
 
@@ -56,68 +49,77 @@ void loop() {
 		int actionResult = pAction->run();
 		delete pAction;
 
-		printf("Action result:[%d]\n", actionResult);
+		cout << "Action result:" << actionResult << endl;
 
 	}
 
-	if (BaseAction::instanceCount > 0) {
-		cout << "**** MEMORY LEAK - ACTION INSTANCE COUNT should be Zero, but == [" << BaseAction::instanceCount << endl;
-	}
+	assertNoMemoryLeak();
 
 }
 
-/*
- Action getAction(ActionEvent &event) {
- cout << "   *** 021" << endl;
- return Action(&event);
- }
 
- */
+Action* getAction(InputEvent &event) {
 
-BaseAction* getAction(ActionEvent &event) {
-
-	BaseAction *newAction = NULL;
-	BaseAction* singleAction = NULL;
+	Action* newAction = NULL;
+	Action* singleAction = NULL;
 	int result = 0;
 	switch (event.getId()) {
-	case btn1pressEvent:
-		newAction = new DisplayAction(1, &event);
+	case InputEvent::btn1pressEvent:
+		singleAction = new DisplayAction(1, &event);
+		newAction = new ActionGroup(singleAction);
 		break;
-	case btn2pressEvent:
+	case InputEvent::btn2pressEvent:
 		singleAction = new DisplayAction(2, &event);
 		newAction = new ActionGroup(singleAction);
 		break;
-	case btn3pressEvent:
+	case InputEvent::btn3pressEvent:
 		newAction = new DisplayAction(3, &event);
 		break;
-	case btn4pressEvent:
-		newAction = new DisplayAction(4, &event);
+	case InputEvent::btn4pressEvent:
+		newAction = new NullAction(&event);
 		break;
 	default:
-		newAction = new ActionGroup(&event);
+		newAction = new NullAction(&event);
 		cout << "NEW ACTION:" << newAction->toString();
 		break;
 	}
 	return newAction;
 }
 
-ActionEvent getEventForInput(char input) {
-	int eventType = invalidEvent;
+InputEvent getEventForInput(char input) {
+	int eventType = InputEvent::invalidEvent;
 	switch (input) {
 	case '1':
-		eventType = btn1pressEvent;
+		eventType = InputEvent::btn1pressEvent;
 		break;
 	case '2':
-		eventType = btn2pressEvent;
+		eventType = InputEvent::btn2pressEvent;
 		break;
 	case '3':
-		eventType = btn3pressEvent;
+		eventType = InputEvent::btn3pressEvent;
 		break;
 	case '4':
-		eventType = btn4pressEvent;
+		eventType = InputEvent::btn4pressEvent;
 		break;
 	default:
 		break;
 	}
-	return ActionEvent(eventType, input);
+	return InputEvent(eventType, input);
+}
+
+void assertNoMemoryLeak() {
+	if (BaseAction::instanceCount > 0) {
+		cout << "**** MEMORY LEAK - ACTION INSTANCE COUNT should be Zero, but == [" << BaseAction::instanceCount << "]"<< endl;
+	}
+	assert(BaseAction::instanceCount == 0);
+}
+
+
+void doExit(Action* pAction) {
+	cout << "EXIT 1 -- ACTION INSTANCE COUNT == [" << BaseAction::instanceCount<< "]" << endl;
+	if (BaseAction::instanceCount > 0) {
+		delete pAction;
+	}
+	cout << "EXIT 2 -- ACTION INSTANCE COUNT == [" << BaseAction::instanceCount << "]" << endl;
+	exit(0);
 }

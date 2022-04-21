@@ -9,9 +9,9 @@
 #include <iostream>
 using namespace std;
 
-#include "NullBaseAction.h"
+#include "NullAction.h"
 
-NullAction::NullAction(ActionEvent* event): BaseAction(event) {
+NullAction::NullAction(InputEvent* event): BaseAction(event) {
 #ifdef DEBUG
 	cout << "   # NullAction contructor (" << this << "), id:" << event->getId() << endl;
 #endif
@@ -31,12 +31,6 @@ NullAction::~NullAction() {
 }
 
 int NullAction::run() {
-	cout << "run NullAction for " << this->toString() << endl;
+	cout << "run NullAction" << "::" << this->toString() << endl;
 	return 0;
 }
-/*
-NullAction::NullAction(const NullAction &other) {
-	// TODO Auto-generated constructor stub
-
-}
-*/

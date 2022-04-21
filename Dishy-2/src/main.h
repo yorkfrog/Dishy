@@ -15,23 +15,24 @@
 
 #include "actions.h"
 #include "input.h"
-#include "ActionEvent.h"
 #include "ActionGroup.h"
-#include "BaseAction.h"
+#include "Action.h"
 #include "DisplayBaseAction.h"
+#include "NullAction.h"
+#include "InputEvent.h"
 
 #define INTERVAL 1250 //The blinking interval
 
 void setup() ;
 void loop();
-ActionEvent getEventForInput(char input);
-int doAction( ActionEvent &event) ;
+InputEvent getEventForInput(char input);
 
+//int doAction( InputEvent &event) ;
 //void getAction(Action* actionToAssign, ActionEvent &event) ;
-BaseAction*  getAction(ActionEvent &event);
+
+Action*  getAction(InputEvent &event);
 //Action getAction(ActionEvent &event) ;
 
-enum eventId{invalidEvent=-1, btn1pressEvent=1,btn2pressEvent=2,btn3pressEvent=3,btn4pressEvent=4};
 
 /*
 struct inputEvent {
