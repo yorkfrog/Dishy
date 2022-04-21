@@ -17,18 +17,22 @@
 class ActionGroup: public virtual Action {
 private:
 	Action* _pTheAction;
-
+	int _maxActions;
+	string* _pDescription;
 
 public:
-	ActionGroup(int maxActions);
-	ActionGroup(Action* action);
+	ActionGroup(int maxActions, string* desc);
+	ActionGroup(int maxActions, Action* action, string* desc);
 	ActionGroup(const ActionGroup &other);
 
 	virtual ~ActionGroup();
 
 	virtual int run();
 	virtual string toString() const;
+	virtual void setDescription(const string* desc) ;
+	virtual string* getDescription() const ;
 
+	int getMaxActions() const ;
 	void addAction(Action* action);
 
 };

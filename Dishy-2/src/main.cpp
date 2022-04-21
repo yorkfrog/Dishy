@@ -62,15 +62,18 @@ Action* getAction(InputEvent &event) {
 
 	Action* newAction = NULL;
 	Action* singleAction = NULL;
+	string group1Desc = "Group1";
+	string group2Desc = "Group2";
 	int result = 0;
+
 	switch (event.getId()) {
 	case InputEvent::btn1pressEvent:
 		singleAction = new DisplayAction(1, &event);
-		newAction = new ActionGroup(singleAction);
+		newAction = new ActionGroup(1, singleAction, &group1Desc);
 		break;
 	case InputEvent::btn2pressEvent:
 		singleAction = new DisplayAction(2, &event);
-		newAction = new ActionGroup(singleAction);
+		newAction = new ActionGroup(1, singleAction, &group2Desc);
 		break;
 	case InputEvent::btn3pressEvent:
 		newAction = new DisplayAction(3, &event);

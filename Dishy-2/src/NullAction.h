@@ -11,7 +11,7 @@
 #include "BaseAction.h"
 #include "InputEvent.h"
 
-class NullAction: public BaseAction {
+class NullAction: public virtual Action, public BaseAction {
 public:
 	NullAction(InputEvent* event);
 	NullAction::NullAction(const NullAction &other);
@@ -19,6 +19,7 @@ public:
 	virtual ~NullAction();
 
 	virtual int run();
+
 };
 
 #endif /* NULLACTION_H_ */

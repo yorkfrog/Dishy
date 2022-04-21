@@ -18,6 +18,9 @@ public:
 	virtual ~Action() {}
 	virtual int run() = 0;
 	virtual string toString() const = 0;
+	virtual void setDescription(const string* desc) = 0;
+	virtual string* getDescription() const = 0;
+
 };
 
 #endif /* ACTION_H_ */

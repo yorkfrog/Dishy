@@ -2,11 +2,11 @@
 #ifdef UNITTEST
 #include "gtest.h"
 #include "../InputEvent.h"
-#include "main.h"
+#include "../main.h"
 
 
 // Test class
-TEST(ActionEventSuite, testActionEventClass) {
+TEST(InputEventTest, classConstruction) {
 
 	int id = 1;
 	char data = 'c';
@@ -27,7 +27,7 @@ TEST(ActionEventSuite, testActionEventClass) {
 }
 
 // valid char input
-TEST(ActionEventSuite, testGetEventActionFromValidInput) {
+TEST(InputEventTest, getInputEventFromValidInput) {
 
 	InputEvent event = getEventForInput('1');
 	EXPECT_EQ(InputEvent::btn1pressEvent, event.getId());
@@ -47,7 +47,7 @@ TEST(ActionEventSuite, testGetEventActionFromValidInput) {
 }
 
 // Invalid char input
-TEST(ActionEventSuite, testGetEventActionFromInvalidInput) {
+TEST(InputEventTest, getInputActionFromInvalidInput) {
 
 	InputEvent event = getEventForInput('0');
 	EXPECT_EQ(typeid(InputEvent), typeid(event));

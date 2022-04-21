@@ -25,14 +25,18 @@ public:
 	BaseAction::BaseAction(const BaseAction &other) ;
 
 	virtual ~BaseAction() ;
-	virtual int run() =0;
 	virtual string toString() const ;
+	virtual void setDescription(const string* desc) ;
+	virtual string* getDescription() const ;
+
+	virtual int run() =0;
 
 protected:
 	InputEvent* getEvent();
 
 private:
 	InputEvent* _event;
+	string* _description;
 
 };
 

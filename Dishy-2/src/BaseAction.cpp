@@ -27,6 +27,7 @@ BaseAction::BaseAction(InputEvent* event) {
 	assert(event != NULL);
 	instanceCount++;
 	_event = event;
+	_description = NULL;
 
 #ifdef DEBUG
 	cout << "   # ACTION contructor (" << this << "), id:" << (int)_event->getId() << endl;
@@ -35,10 +36,12 @@ BaseAction::BaseAction(InputEvent* event) {
 
 BaseAction::BaseAction(const BaseAction& other) {
 	instanceCount++;
-#ifdef DEBUG
+	_event = other._event;
+	_description = other._description;
+
+	#ifdef DEBUG
 	cout << "   # ACTION COPY contructor, from (" << &other << "), to (" << this << "), id:" << (int)other._event->getId() << endl;
 #endif
-	_event = other._event;
 
 }
 
@@ -47,6 +50,15 @@ BaseAction::~BaseAction() {
 #ifdef DEBUG
 	cout << "   # ACTION destructor on (" << this << "::[" << instanceCount << "]), id:" << _event->getId() << endl;
 #endif
+}
+
+
+void BaseAction::setDescription(const string* desc) {
+	_description = desc;
+}
+
+string* BaseAction::getDescription() const {
+	return _description;
 }
 
 InputEvent* BaseAction::getEvent() {
