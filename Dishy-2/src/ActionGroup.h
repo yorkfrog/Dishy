@@ -19,10 +19,17 @@ private:
 	Action* _pTheAction;
 	int _maxActions;
 	string* _pDescription;
+	string _testStr;
 
 public:
 	ActionGroup(int maxActions, string* desc);
 	ActionGroup(int maxActions, Action* action, string* desc);
+
+
+	ActionGroup(int maxActions, Action* action, string* desc, string &testStr);
+
+
+
 	ActionGroup(const ActionGroup &other);
 
 	virtual ~ActionGroup();
@@ -35,6 +42,13 @@ public:
 	int getMaxActions() const ;
 	void addAction(Action* action);
 
+	const string& getTestStr() const {
+		return _testStr;
+	}
+
+	void setTestStr(const string &testStr) {
+		_testStr = testStr;
+	}
 };
 
 #endif /* ACTIONGROUP_H_ */

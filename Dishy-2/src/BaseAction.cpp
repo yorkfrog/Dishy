@@ -4,7 +4,7 @@
  *  Created on: 18 Apr 2022
  *      Author: colin
  */
-//#define DEBUG
+#define DEBUG
 
 #include <iostream>
 #include <sstream>
@@ -91,7 +91,7 @@ int BaseAction::run() {
 int BaseAction::run() {
 	cout << "run **MCU** Action for " << _event->toString() << endl;
 
-	return 0;
+	return 0;ActionGroup
 }
 
 

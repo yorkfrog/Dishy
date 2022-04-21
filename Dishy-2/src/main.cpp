@@ -62,8 +62,11 @@ Action* getAction(InputEvent &event) {
 
 	Action* newAction = NULL;
 	Action* singleAction = NULL;
+	ActionGroup* newGrpAction = NULL;
 	string group1Desc = "Group1";
 	string group2Desc = "Group2";
+	string group3Desc = "Group3";
+	string testDesc = "TEST_STR";
 	int result = 0;
 
 	switch (event.getId()) {
@@ -73,7 +76,12 @@ Action* getAction(InputEvent &event) {
 		break;
 	case InputEvent::btn2pressEvent:
 		singleAction = new DisplayAction(2, &event);
-		newAction = new ActionGroup(1, singleAction, &group2Desc);
+		newGrpAction = new ActionGroup(1, singleAction, &group2Desc, testDesc);
+
+
+		cout << "******* DESC:[" << *(newGrpAction->getDescription()) << "], TEST Str:[" << newGrpAction->getTestStr() << "]" << endl;
+
+		newAction = newGrpAction;
 		break;
 	case InputEvent::btn3pressEvent:
 		newAction = new DisplayAction(3, &event);

@@ -25,6 +25,21 @@ ActionGroup::ActionGroup(int maxActions, string* desc) {
 #endif
 }
 
+// this object will delete the action object on destruction
+ActionGroup::ActionGroup(int maxActions, Action* action, string* desc, string &testStr) {
+	assert(maxActions > 0);
+	assert(action != NULL);
+
+	_pTheAction = action;
+	_maxActions = maxActions;
+	_pDescription = desc;
+	_testStr = testStr;
+#ifdef DEBUG
+	cout << "   # ActionGroup A contructor (" << this << ")" << endl;
+#endif
+}
+
+// this object will delete the action object on destruction
 ActionGroup::ActionGroup(int maxActions, Action* action, string* desc) {
 	assert(maxActions > 0);
 	assert(action != NULL);
@@ -40,17 +55,30 @@ ActionGroup::ActionGroup(int maxActions, Action* action, string* desc) {
 ActionGroup::ActionGroup(const ActionGroup &other) {
 	assert(&other != NULL);
 
-	_pTheAction = other._pTheAction;
+	// FIXME : we are copying another object pointer here that ActionGroup is responsible for
+	// so it will get deleted twice!!
+//	_pTheAction = other._pTheAction;
+	// do all class in tree (NullAction->BaseAction->Action) all define the BigTHree???? - do smaller example to prove it.
+
+	_pTheAction = NULL;
 	_maxActions = other._maxActions;
 	_pDescription = other._pDescription;
+/*
 #ifdef DEBUG
 	cout << "   # ActionGroup  COPY constructor, from (" << &other << "), to ("
 			<< this << ")" << endl;
 #endif
+*/
 
 }
 
+// #FIXME - need operator= too.
+
+
+
 ActionGroup::~ActionGroup() {
+	delete _pTheAction;
+	_pTheAction = NULL;
 #ifdef DEBUG
 	cout << "   # ActionGroup destructor on (" << this << ")" << endl;
 #endif
@@ -60,6 +88,7 @@ int ActionGroup::getMaxActions() const {
 	return _maxActions;
 }
 
+// this object will delete the action object on destruction
 void ActionGroup::addAction(Action *action) {
 	assert(action != NULL);
 	_pTheAction = action;
@@ -75,7 +104,9 @@ string ActionGroup::toString() const {
 }
 
 int ActionGroup::run() {
-	cout << "run " << toString() << " " << _pTheAction->toString() << endl;
+//	cout << "run " << toString() << " " << _pTheAction->toString() << endl;
+	// TODO debug
+	cout << "run " << toString() << " " << _pTheAction << endl;
 	return 0;
 }
 
