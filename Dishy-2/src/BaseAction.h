@@ -29,17 +29,15 @@ public:
 	virtual BaseAction& operator=(const BaseAction &other);
 	virtual ~BaseAction() ;
 	virtual string toString() const ;
-	virtual void setDescription(const string* desc) ;
-	virtual string* getDescription() const ;
+	virtual void setDescription(const string desc) ;
+	virtual string getDescription() const ;
 
 	InputEvent* getEvent() const;
 	virtual int run() =0;
 
 private:
 	InputEvent* _pEvent;
-
-// FIXME - description pointer? yes or no and if so copy?????
-	string* _pDescription;
+	string _description;
 
 };
 

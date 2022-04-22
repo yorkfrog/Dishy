@@ -10,34 +10,36 @@
 
 // Test class instantiation
 TEST(ActionGroupTest, classConstruction) {
-	/*
-	int id = 1;
-	char ag_data = 'c';
-	InputEvent ag_event = InputEvent(id, ag_data);
 
-
-
-  Action* nAction = new NullAction(&ag_event);
 	string description = "TestGroup";
 
-	ActionGroup actionGrp1 = ActionGroup(1, nAction, &description);
-
+	InputEvent event1 = InputEvent(1, 'a');
+  Action* nAction = new NullAction(&event1);
+	ActionGroup actionGrp1 = ActionGroup(1, nAction, description);
 	EXPECT_EQ(1, actionGrp1.getMaxActions());
-	EXPECT_EQ(description, *(actionGrp1.getDescription()));
+	EXPECT_EQ(description, actionGrp1.getDescription());
+
+	delete nAction;
+
+	InputEvent event2 = InputEvent(2, 'b');
+  NullAction action2 = NullAction(&event2);
+	ActionGroup actionGrp3 = ActionGroup(1, &action2, "Literal Description");
+	EXPECT_EQ(1, actionGrp3.getMaxActions());
+	EXPECT_EQ("Literal Description", actionGrp3.getDescription());
 
 	// copy constructor
-	// NullAction action2 = NullAction(action);
-	//Action* nAction2 = new NullAction(&ag_event);
 	ActionGroup actionGrp2 = ActionGroup(actionGrp1);
 	ASSERT_NE(&actionGrp1, &actionGrp2);
 
 	EXPECT_EQ(1, actionGrp2.getMaxActions());
-	EXPECT_EQ(description, *(actionGrp2.getDescription())) ;
-	EXPECT_EQ(1, actionGrp2.run());
-
-*/
+	EXPECT_EQ(description, actionGrp2.getDescription()) ;
+	EXPECT_EQ(0, actionGrp2.run());
 
 }
+
+/*
+ * Get tests from NullAction ........
+ */
 
 /*
  // Test class instantiation

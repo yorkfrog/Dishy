@@ -118,9 +118,11 @@ TEST_F(NullActionTest, setGetActionDescription) {
 
 	NullAction action = NullAction(gDefaultEvent);
 	string desc = "TestDesc";
-	action.setDescription(&desc);
+	action.setDescription(desc);
+	EXPECT_EQ(desc, action.getDescription());
 
-	EXPECT_EQ(desc, *(action.getDescription()));
+	action.setDescription("String Literal");
+	EXPECT_EQ("String Literal", action.getDescription());
 }
 
 TEST_F(NullActionTest, noActionConstructionMemoryLeak) {
@@ -151,7 +153,7 @@ TEST_F(NullActionTest, clone) {
 		NullAction action1 = NullAction(&event1);
 
 		string desc = "my null action";
-		action1.setDescription(&desc);
+		action1.setDescription(desc);
 		Action *pAction1 = &action1;
 
 		Action *pActionClone = pAction1->clone();

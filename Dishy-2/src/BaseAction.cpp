@@ -28,7 +28,7 @@ BaseAction::BaseAction(InputEvent* event) {
 	assert(event != NULL);
 	instanceCount++;
 	_pEvent = new InputEvent(*event);
-	_pDescription = NULL;
+	_description = "";
 
 #ifdef DEBUG
 	cout << "   # ACTION contructor (" << this << "), id:" << (int)_pEvent->getId() << endl;
@@ -38,7 +38,7 @@ BaseAction::BaseAction(InputEvent* event) {
 BaseAction::BaseAction(const BaseAction& other) {
 	instanceCount++;
 	_pEvent = new InputEvent(*(other._pEvent));
-	_pDescription = other._pDescription;
+	_description = other._description;
 
 	#ifdef DEBUG
 	cout << "   # ACTION COPY contructor, from (" << &other << "), to (" << this << "), id:" << (int)other._pEvent->getId() << endl;
@@ -61,7 +61,7 @@ BaseAction& BaseAction::operator=(const BaseAction &other) {
 		// 3: assign the new memory to the object
 //			cout << "#### 4" << endl;
 		_pEvent = pNewEvent;
-		_pDescription = other._pDescription;
+		_description = other._description;
 
 //			cout << "#### 5" << endl;
 	}
@@ -79,12 +79,12 @@ BaseAction::~BaseAction() {
 }
 
 
-void BaseAction::setDescription(const string* desc) {
-	_pDescription = desc;
+void BaseAction::setDescription(const string desc) {
+	_description = desc;
 }
 
-string* BaseAction::getDescription() const {
-	return _pDescription;
+string BaseAction::getDescription() const {
+	return _description;
 }
 
 InputEvent* BaseAction::getEvent() const {

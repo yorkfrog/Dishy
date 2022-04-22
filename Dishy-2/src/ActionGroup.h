@@ -18,13 +18,11 @@ class ActionGroup: public virtual Action {
 private:
 	Action* _pTheAction;
 	int _maxActions;
-	string* _pDescription;
-	string _testStr;
+	string _description;
 
 public:
-	ActionGroup(int maxActions, string* desc);
-	ActionGroup(int maxActions, Action* action, string* desc);
-	ActionGroup(int maxActions, Action* action, string* desc, string &testStr);
+	ActionGroup(int maxActions, string desc);
+	ActionGroup(int maxActions, Action* action, string desc);
 
 	ActionGroup(const ActionGroup &other);
 
@@ -33,19 +31,12 @@ public:
 
 	virtual int run();
 	virtual string toString() const;
-	virtual void setDescription(const string* desc) ;
-	virtual string* getDescription() const ;
+	virtual void setDescription(const string desc) ;
+	virtual string getDescription() const ;
 
 	int getMaxActions() const ;
 	void addAction(Action* action);
 
-	const string& getTestStr() const {
-		return _testStr;
-	}
-
-	void setTestStr(const string &testStr) {
-		_testStr = testStr;
-	}
 };
 
 #endif /* ACTIONGROUP_H_ */
