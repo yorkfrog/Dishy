@@ -11,20 +11,22 @@
 #include "BaseAction.h"
 #include "InputEvent.h"
 
-class DisplayAction: public BaseAction {
+class DisplayAction: public virtual Action, public BaseAction
+{
 private:
 	int _buttonNumber;
 
 public:
-	DisplayAction(int buttonNum, InputEvent* event);
+	DisplayAction(int buttonNum, InputEvent *event);
 	DisplayAction::DisplayAction(const DisplayAction &other);
 
 	virtual ~DisplayAction();
+	virtual Action* clone() const;
 
 	virtual int run();
-	virtual string toString() const ;
+	virtual string toString() const;
 
-	int getButtonNumber() const ;
+	int getButtonNumber() const;
 };
 
 #endif /* DISPLAYBASEACTION_H_ */

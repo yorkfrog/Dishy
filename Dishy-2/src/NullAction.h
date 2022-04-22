@@ -11,12 +11,14 @@
 #include "BaseAction.h"
 #include "InputEvent.h"
 
-class NullAction: public virtual Action, public BaseAction {
+class NullAction: public virtual Action, public BaseAction
+{
 public:
 	NullAction(InputEvent* event);
 	NullAction::NullAction(const NullAction &other);
 
 	virtual ~NullAction();
+	virtual Action* clone() const;
 
 	virtual int run();
 

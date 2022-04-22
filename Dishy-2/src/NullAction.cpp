@@ -30,6 +30,11 @@ NullAction::~NullAction() {
 #endif
 }
 
+// the caller is responsible for free the memory allocated to this cloned object.
+Action* NullAction::clone() const {
+	return new NullAction(*this);
+}
+
 int NullAction::run() {
 	cout << "run NullAction" << "::" << this->toString() << endl;
 	return 0;

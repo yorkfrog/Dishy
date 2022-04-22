@@ -24,15 +24,12 @@ private:
 public:
 	ActionGroup(int maxActions, string* desc);
 	ActionGroup(int maxActions, Action* action, string* desc);
-
-
 	ActionGroup(int maxActions, Action* action, string* desc, string &testStr);
-
-
 
 	ActionGroup(const ActionGroup &other);
 
 	virtual ~ActionGroup();
+	virtual Action* clone() const;
 
 	virtual int run();
 	virtual string toString() const;

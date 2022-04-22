@@ -21,7 +21,7 @@ ActionGroup::ActionGroup(int maxActions, string* desc) {
 	_maxActions = maxActions;
 	_pDescription = desc;
 #ifdef DEBUG
-	cout << "   # DEF ActionGroup contructor (" << this << ")" << endl;
+	cout << "   # DEF ActionGroup constructor (" << this << ")" << endl;
 #endif
 }
 
@@ -30,25 +30,28 @@ ActionGroup::ActionGroup(int maxActions, Action* action, string* desc, string &t
 	assert(maxActions > 0);
 	assert(action != NULL);
 
+	// FIXME - use copy c'tor for Action - but do we need to know the type of the Action to call it s c'tor?????
 	_pTheAction = action;
 	_maxActions = maxActions;
 	_pDescription = desc;
 	_testStr = testStr;
 #ifdef DEBUG
-	cout << "   # ActionGroup A contructor (" << this << ")" << endl;
+	cout << "   # ActionGroup A constructor (" << this << ")" << endl;
 #endif
 }
+
 
 // this object will delete the action object on destruction
 ActionGroup::ActionGroup(int maxActions, Action* action, string* desc) {
 	assert(maxActions > 0);
 	assert(action != NULL);
 
+	// FIXME - use copy c'tor for Action - but do we need to know the type of the Action to call it s c'tor?????
 	_pTheAction = action;
 	_maxActions = maxActions;
 	_pDescription = desc;
 #ifdef DEBUG
-	cout << "   # ActionGroup A contructor (" << this << ")" << endl;
+	cout << "   # ActionGroup A constructor (" << this << ")" << endl;
 #endif
 }
 
@@ -60,6 +63,7 @@ ActionGroup::ActionGroup(const ActionGroup &other) {
 //	_pTheAction = other._pTheAction;
 	// do all class in tree (NullAction->BaseAction->Action) all define the BigTHree???? - do smaller example to prove it.
 
+	// FIXME - use copy c'tor for Action - but do we need to know the type of the Action to call it s c'tor?????
 	_pTheAction = NULL;
 	_maxActions = other._maxActions;
 	_pDescription = other._pDescription;
@@ -82,6 +86,13 @@ ActionGroup::~ActionGroup() {
 #ifdef DEBUG
 	cout << "   # ActionGroup destructor on (" << this << ")" << endl;
 #endif
+}
+
+Action* ActionGroup::clone() const {
+	// #FIXME need Clone function
+	assert(false);
+	return NULL;
+//	return new DisplayAction(*this);
 }
 
 int ActionGroup::getMaxActions() const {

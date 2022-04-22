@@ -16,6 +16,7 @@ public:
   // virtual destructor is required if the object may
   // be deleted through a pointer to Serializable
 	virtual ~Action() {}
+	virtual Action* clone() const = 0;
 	virtual int run() = 0;
 	virtual string toString() const = 0;
 	virtual void setDescription(const string* desc) = 0;

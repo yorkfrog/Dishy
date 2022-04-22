@@ -39,6 +39,11 @@ DisplayAction::~DisplayAction() {
 #endif
 }
 
+// the caller is responsible for free the memory allocated to this cloned object.
+Action* DisplayAction::clone() const {
+	return new DisplayAction(*this);
+}
+
 int DisplayAction::run() {
 	cout << "run DisplayAction::" << this->toString() << endl;
 	return 0;

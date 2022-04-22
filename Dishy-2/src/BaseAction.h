@@ -38,7 +38,7 @@ public:
 private:
 	InputEvent* _pEvent;
 
-// FIXME - pointer or not????
+// FIXME - description pointer? yes or no and if so copy?????
 	string* _pDescription;
 
 };

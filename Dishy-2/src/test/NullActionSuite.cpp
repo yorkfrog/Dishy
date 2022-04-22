@@ -131,12 +131,38 @@ TEST_F(NullActionTest, noActionConstructionMemoryLeak) {
 		InputEvent event1 = InputEvent(1, 'a');
 		InputEvent *pEvent2 = new InputEvent(2, 'b');
 
-		NullAction baseAction = NullAction(&event1);
-		DisplayAction displayAction = DisplayAction(1, pEvent2);
-		Action *action = &displayAction;
+		NullAction action1 = NullAction(&event1);
+		NullAction action2 = NullAction(pEvent2);
+		Action *action = &action2;
 		EXPECT_EQ(5, InputEvent::instanceCount);
 		EXPECT_EQ(2, NullAction::instanceCount);
 		delete pEvent2;
+	}
+	EXPECT_EQ(1, InputEvent::instanceCount);
+	EXPECT_EQ(0, NullAction::instanceCount);
+}
+
+TEST_F(NullActionTest, clone) {
+	// the Test Fixture creates an InputEvent instance which we won;t use.
+	EXPECT_EQ(1, InputEvent::instanceCount) << "Check 0 InputEvent instance on entry.";
+	EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
+	{
+		InputEvent event1 = InputEvent(1, 'a');
+		NullAction action1 = NullAction(&event1);
+
+		string desc = "my null action";
+		action1.setDescription(&desc);
+		Action *pAction1 = &action1;
+
+		Action *pActionClone = pAction1->clone();
+		EXPECT_NE(pAction1, pActionClone);
+		EXPECT_EQ(pActionClone->getDescription(), action1.getDescription());
+		EXPECT_EQ(pActionClone->run(), action1.run());
+
+		EXPECT_EQ(4, InputEvent::instanceCount);
+		EXPECT_EQ(2, NullAction::instanceCount);
+
+		delete pActionClone;
 	}
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
@@ -153,6 +179,8 @@ TEST(ActionInterfaceTest, runViaAction) {
 	Action *bAction = &action;
 	EXPECT_EQ(1, NullAction::instanceCount);
 }
+
+
 
 #endif
 
