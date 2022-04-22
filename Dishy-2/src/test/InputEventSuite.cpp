@@ -79,5 +79,16 @@ TEST(InputEventTest, getInputActionFromInvalidInput) {
 	EXPECT_EQ('\0', event.getData());
 }
 
+TEST(InputEventTest, noConstructionMemoryLeak) {
+	EXPECT_EQ(0, InputEvent::instanceCount);
+	{
+		InputEvent event1 = InputEvent(1, 'c');
+		InputEvent event2 = InputEvent(2, 'x');
+		InputEvent* pEvent = &event2;
+		EXPECT_EQ(2, InputEvent::instanceCount);
+	}
+	EXPECT_EQ(0, InputEvent::instanceCount);
+}
+
 
 #endif

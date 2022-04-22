@@ -1,4 +1,3 @@
-
 #ifdef UNITTEST
 #include "gtest.h"
 
@@ -10,21 +9,83 @@
 #include "../NullAction.h"
 #include "../main.h"
 
-
 // Test class instantiation
-TEST_F(NullActionTest, classConstruction) {
+TEST_F(NullActionTest, classConstructionFromEventObject) {
 
-	NullAction action = NullAction(gDefaultEvent);
-	EXPECT_NE(&action, NULL);
-	EXPECT_EQ(typeid(NullAction), typeid(action));
-	EXPECT_EQ(1, action.instanceCount);
+	EXPECT_EQ(1, InputEvent::instanceCount);
+	EXPECT_EQ(0, NullAction::instanceCount);
+	{
+		InputEvent event2 = InputEvent(2, 'b');
+		NullAction action = NullAction(&event2);
+		EXPECT_NE(&action, NULL);
+		EXPECT_EQ(typeid(NullAction), typeid(action));
+		EXPECT_EQ(1, NullAction::instanceCount);
+	}
+	EXPECT_EQ(0, NullAction::instanceCount);
+	EXPECT_EQ(1, InputEvent::instanceCount);
+}
 
+TEST_F(NullActionTest, classConstructionFromEventNewPointer) {
+
+	EXPECT_EQ(1, InputEvent::instanceCount);
+	EXPECT_EQ(0, NullAction::instanceCount);
+	{
+		InputEvent *pEvent1 = new InputEvent(1, 'a');
+		NullAction action = NullAction(pEvent1);
+		EXPECT_NE(&action, NULL);
+		EXPECT_EQ(typeid(NullAction), typeid(action));
+		EXPECT_EQ(1, NullAction::instanceCount);
+		delete pEvent1;
+	}
+	EXPECT_EQ(0, NullAction::instanceCount);
+	EXPECT_EQ(1, InputEvent::instanceCount);
+}
+
+TEST_F(NullActionTest, classCopyConstruction) {
 	// copy constructor
-	NullAction action2 = NullAction(action);
-	EXPECT_EQ(2, action.instanceCount);
-	EXPECT_EQ(typeid(NullAction), typeid(action2));
-	ASSERT_NE(&action, &action2);
+	EXPECT_EQ(1, InputEvent::instanceCount);
+	EXPECT_EQ(0, NullAction::instanceCount);
+	{
+		InputEvent event1 = InputEvent(1, 'a');
+		NullAction action = NullAction(&event1);
+		NullAction action2 = NullAction(action);
+		EXPECT_EQ(2, NullAction::instanceCount);
+		EXPECT_EQ(4, InputEvent::instanceCount);
+		EXPECT_EQ(typeid(NullAction), typeid(action2));
+		ASSERT_NE(&action, &action2);
+		ASSERT_NE(action.getEvent(), action2.getEvent())<< "Expect event is copied so event ptr's a1.event != a2.event";
+	}
+	EXPECT_EQ(0, NullAction::instanceCount);
+	EXPECT_EQ(1, InputEvent::instanceCount);
+}
 
+TEST_F(NullActionTest, classOperatorEquals) {
+	// copy constructor
+	EXPECT_EQ(1, InputEvent::instanceCount);
+	EXPECT_EQ(0, NullAction::instanceCount);
+	{
+		InputEvent event1 = InputEvent(1, 'a');
+		NullAction action1 = NullAction(&event1);
+		InputEvent event3 = InputEvent(3, 'c');
+		NullAction action3 = NullAction(&event3);
+
+		EXPECT_NE(action1.getEvent()->getId(), action3.getEvent()->getId());
+		EXPECT_NE(action1.getEvent()->getData(), action3.getEvent()->getData());
+		EXPECT_NE(action1.getEvent(), action3.getEvent());
+		EXPECT_EQ(2, NullAction::instanceCount);
+		EXPECT_EQ(5, InputEvent::instanceCount);
+
+		action1 = action3;
+
+		EXPECT_EQ(action1.getEvent()->getId(), action3.getEvent()->getId());
+		EXPECT_EQ(action1.getEvent()->getData(), action3.getEvent()->getData());
+		EXPECT_NE(action1.getEvent(), action3.getEvent());
+
+		EXPECT_EQ(2, NullAction::instanceCount);
+		EXPECT_EQ(5, InputEvent::instanceCount);
+	}
+	EXPECT_EQ(0, NullAction::instanceCount);
+	EXPECT_EQ(1, InputEvent::instanceCount);
 }
 
 // DEATH TEST#endif /* NULLACTIONTEST_H_ */
@@ -62,13 +123,22 @@ TEST_F(NullActionTest, setGetActionDescription) {
 	EXPECT_EQ(desc, *(action.getDescription()));
 }
 
-TEST_F(NullActionTest, noActionMemoryLeak) {
+TEST_F(NullActionTest, noActionConstructionMemoryLeak) {
+	// the Test Fixture creates an InputEvent instance which we won;t use.
+	EXPECT_EQ(1, InputEvent::instanceCount) << "Check 0 InputEvent instance on entry.";
+	EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
 	{
-		NullAction baseAction = NullAction(gDefaultEvent);
-		DisplayAction displayAction = DisplayAction(1, gDefaultEvent);
+		InputEvent event1 = InputEvent(1, 'a');
+		InputEvent *pEvent2 = new InputEvent(2, 'b');
+
+		NullAction baseAction = NullAction(&event1);
+		DisplayAction displayAction = DisplayAction(1, pEvent2);
 		Action *action = &displayAction;
+		EXPECT_EQ(5, InputEvent::instanceCount);
 		EXPECT_EQ(2, NullAction::instanceCount);
+		delete pEvent2;
 	}
+	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
 }
 
@@ -85,5 +155,4 @@ TEST(ActionInterfaceTest, runViaAction) {
 }
 
 #endif
-
 

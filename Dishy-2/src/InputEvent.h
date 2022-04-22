@@ -12,6 +12,10 @@
 using namespace std;
 
 class InputEvent {
+
+public:
+	static int instanceCount;
+
 public:
 	enum eventId{invalidEvent=-1, btn1pressEvent=1,btn2pressEvent=2,btn3pressEvent=3,btn4pressEvent=4};
 

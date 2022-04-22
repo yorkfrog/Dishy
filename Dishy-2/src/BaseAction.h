@@ -14,29 +14,32 @@ using namespace std;
 #include "Action.h"
 #include "InputEvent.h"
 
+//#define INSTANCE_COUNT
 
 class BaseAction: public virtual Action  {
+
 public:
 	static int instanceCount;
 
 public:
 	//Action();
 	BaseAction(InputEvent* event) ;
-	BaseAction::BaseAction(const BaseAction &other) ;
+	BaseAction(const BaseAction &other) ;
 
+	virtual BaseAction& operator=(const BaseAction &other);
 	virtual ~BaseAction() ;
 	virtual string toString() const ;
 	virtual void setDescription(const string* desc) ;
 	virtual string* getDescription() const ;
 
+	InputEvent* getEvent() const;
 	virtual int run() =0;
 
-protected:
-	InputEvent* getEvent();
-
 private:
-	InputEvent* _event;
-	string* _description;
+	InputEvent* _pEvent;
+
+// FIXME - pointer or not????
+	string* _pDescription;
 
 };
 
