@@ -21,6 +21,8 @@ TEST_F(NullActionTest, classConstructionFromEventObject)
 	{
 		InputEvent event2 = InputEvent(2, 'b');
 		NullAction action = NullAction(&event2);
+		const int defaultId = 1;
+		int defaultIdXX = 1;
 		EXPECT_NE(&action, NULL);
 		EXPECT_EQ(typeid(NullAction), typeid(action));
 		EXPECT_EQ(1, NullAction::instanceCount);

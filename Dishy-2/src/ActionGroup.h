@@ -28,6 +28,7 @@ public:
 	ActionGroup(int maxActions, Action* action, string desc);
 
 	ActionGroup(const ActionGroup &other);
+	ActionGroup& operator=(const ActionGroup &other) ;
 
 	virtual ~ActionGroup();
 	virtual Action* clone() const;

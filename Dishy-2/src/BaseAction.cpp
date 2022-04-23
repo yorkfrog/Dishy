@@ -48,22 +48,17 @@ BaseAction::BaseAction(const BaseAction& other) {
 
 BaseAction& BaseAction::operator=(const BaseAction &other) {
 	cout << "# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl;
-//	cout << "#### 1" << endl;
 	if (this != &other) { // protect against invalid self-assignment
 		cout << "#### 2" << endl;
 		// 1: allocate new memory and copy the elements
 		InputEvent *pNewEvent = new InputEvent(*(other._pEvent));
 
 		// 2: deallocate old memory
-//		cout << "#### 3" << endl;
 		delete _pEvent;
 
 		// 3: assign the new memory to the object
-//			cout << "#### 4" << endl;
 		_pEvent = pNewEvent;
 		_description = other._description;
-
-//			cout << "#### 5" << endl;
 	}
 	// by convention, always return *this
 	return *this;

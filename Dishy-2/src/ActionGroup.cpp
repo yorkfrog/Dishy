@@ -17,7 +17,8 @@ using namespace std;
 
 int ActionGroup::instanceCount = 0;
 
-ActionGroup::ActionGroup(int maxActions, string desc) {
+ActionGroup::ActionGroup(int maxActions, string desc)
+{
 	instanceCount++;
 	assert(maxActions > 0);
 	_pTheAction = NULL;
@@ -30,7 +31,8 @@ ActionGroup::ActionGroup(int maxActions, string desc) {
 }
 
 // this object will delete the action object on destruction
-ActionGroup::ActionGroup(int maxActions, Action* action, string desc) {
+ActionGroup::ActionGroup(int maxActions, Action *action, string desc)
+{
 	instanceCount++;
 	assert(maxActions > 0);
 	assert(action != NULL);
@@ -44,33 +46,43 @@ ActionGroup::ActionGroup(int maxActions, Action* action, string desc) {
 #endif
 }
 
-ActionGroup::ActionGroup(const ActionGroup &other) {
-	instanceCount++;
+ActionGroup::ActionGroup(const ActionGroup &other)
+{
 	assert(&other != NULL);
+	instanceCount++;
 
-	// FIXME : we are copying another object pointer here that ActionGroup is responsible for
-	// so it will get deleted twice!!
-//	_pTheAction = other._pTheAction;
-	// do all class in tree (NullAction->BaseAction->Action) all define the BigTHree???? - do smaller example to prove it.
-
-	// FIXME - use copy c'tor for Action - but do we need to know the type of the Action to call it s c'tor?????
 	_pTheAction = other._pTheAction->clone();
 	_maxActions = other._maxActions;
 	_description = other._description;
-/*
 #ifdef DEBUG
-	cout << "   # ActionGroup  COPY constructor, from (" << &other << "), to ("
-			<< this << ")" << endl;
+	cout << "   # ActionGroup  COPY constructor, from (" << &other << "), to (" << this << ")" << endl;
 #endif
-*/
-
 }
 
 // #FIXME - need operator= too.
+ActionGroup& ActionGroup::operator=(const ActionGroup &other) {
+
+	cout << "# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl;
+	if (this != &other) { // protect against invalid self-assignment
+		// 1: allocate new memory and copy the elements
+		Action *pNewAction = other._pTheAction->clone();
+
+		// 2: deallocate old memory
+		delete _pTheAction;
+
+		// 3: assign the new memory to the object
+		_pTheAction = pNewAction;
+		_maxActions = other._maxActions;
+		_description = other._description;
+	}
+	// by convention, always return *this
+
+	return *this;
+}
 
 
-
-ActionGroup::~ActionGroup() {
+ActionGroup::~ActionGroup()
+{
 	delete _pTheAction;
 	_pTheAction = NULL;
 #ifdef DEBUG
@@ -79,7 +91,8 @@ ActionGroup::~ActionGroup() {
 	instanceCount--;
 }
 
-Action* ActionGroup::clone() const {
+Action* ActionGroup::clone() const
+{
 	instanceCount++;
 	// #FIXME need Clone function
 //	assert(false);
@@ -87,12 +100,14 @@ Action* ActionGroup::clone() const {
 //	return new DisplayAction(*this);
 }
 
-int ActionGroup::getMaxActions() const {
+int ActionGroup::getMaxActions() const
+{
 	return _maxActions;
 }
 
 // this object will delete the action object on destruction
-void ActionGroup::addAction(Action *action) {
+void ActionGroup::addAction(Action *action)
+{
 	assert(action != NULL);
 	_pTheAction = action;
 
@@ -100,25 +115,28 @@ void ActionGroup::addAction(Action *action) {
 
 }
 
-string ActionGroup::toString() const {
+string ActionGroup::toString() const
+{
 	stringstream ss;
 	ss << "ActionGroup[" << _description << "][" << _maxActions << "]";
 	return ss.str();
 }
 
-int ActionGroup::run() {
+int ActionGroup::run()
+{
 //	cout << "run " << toString() << " " << _pTheAction->toString() << endl;
 	// TODO debug
 	cout << "run " << toString() << " " << _pTheAction << endl;
-	return 0;
+	return _pTheAction->run();
 }
 
-
-void ActionGroup::setDescription(const string desc) {
+void ActionGroup::setDescription(const string desc)
+{
 	_description = desc;
 }
 
-string ActionGroup::getDescription() const {
+string ActionGroup::getDescription() const
+{
 	return _description;
 }
 

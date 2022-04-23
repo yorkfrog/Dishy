@@ -37,5 +37,5 @@ Action* NullAction::clone() const {
 
 int NullAction::run() {
 	cout << "run NullAction" << "::" << this->toString() << endl;
-	return 0;
+	return getDescription().length();
 }

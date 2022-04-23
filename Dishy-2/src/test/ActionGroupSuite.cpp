@@ -30,10 +30,11 @@ NullAction makeNullAction(int id, char data)
 // 1 event instance
 // 1 action instance
 // 1 actionGrp instance
-ActionGroup makeActionGroup()
+ActionGroup makeActionGroup(int actionGrpMax = 1, string desc = defaultDescription, int actionId = defaultId, char actionData = defaultActionData)
 {
-	NullAction action1 = makeNullAction(defaultId, defaultActionData);
-	return ActionGroup(1, &action1, defaultDescription);
+	NullAction action1 = makeNullAction(actionId, actionData);
+	action1.setDescription((string("Action[") + to_string(actionId) + (string("]:")) + desc));
+	return ActionGroup(actionGrpMax, &action1, desc);
 }
 
 void expectAfterActionGroupConstruction(ActionGroup *actionGrp, string description, int actionGrpInstanceCount)
@@ -90,59 +91,54 @@ TEST(ActionGroupTest, classCopyConstruction)
 	expectStartEndInstaneCounts();
 }
 
-/*
- TEST_F(ActionGroupTest, classOperatorEquals) {
- // copy constructor
- EXPECT_EQ(1, InputEvent::instanceCount);
- EXPECT_EQ(0, NullAction::instanceCount);
- {
- InputEvent event1 = InputEvent(1, 'a');
- NullAction action1 = NullAction(&event1);
- InputEvent event3 = InputEvent(3, 'c');
- NullAction action3 = NullAction(&event3);
+TEST(ActionGroupTest, classOperatorEquals)
+{
+	expectStartEndInstaneCounts();
+	{
+		ActionGroup actionGrp1 = makeActionGroup(10, "Group1");
+		ActionGroup actionGrp2 = makeActionGroup(20, "My Group 2");
 
- EXPECT_NE(action1.getEvent()->getId(), action3.getEvent()->getId());
- EXPECT_NE(action1.getEvent()->getData(), action3.getEvent()->getData());
- EXPECT_NE(action1.getEvent(), action3.getEvent());
- EXPECT_EQ(2, NullAction::instanceCount);
- EXPECT_EQ(5, InputEvent::instanceCount);
+		EXPECT_NE(actionGrp1.getMaxActions(), actionGrp2.getMaxActions());
+		EXPECT_NE(actionGrp1.getDescription(), actionGrp2.getDescription());
+		EXPECT_NE(actionGrp1.run(), actionGrp2.run());
+		EXPECT_EQ(2, ActionGroup::instanceCount);
+		EXPECT_EQ(2, NullAction::instanceCount);
+		EXPECT_EQ(2, InputEvent::instanceCount);
 
- action1 = action3;
+		actionGrp1 = actionGrp2;
 
- EXPECT_EQ(action1.getEvent()->getId(), action3.getEvent()->getId());
- EXPECT_EQ(action1.getEvent()->getData(), action3.getEvent()->getData());
- EXPECT_NE(action1.getEvent(), action3.getEvent());
-
- EXPECT_EQ(2, NullAction::instanceCount);
- EXPECT_EQ(5, InputEvent::instanceCount);
- }
- EXPECT_EQ(0, NullAction::instanceCount);
- EXPECT_EQ(1, InputEvent::instanceCount);
- }
-
- */
+		EXPECT_NE(&actionGrp1, &actionGrp2);
+		EXPECT_EQ(actionGrp1.getMaxActions(), actionGrp2.getMaxActions());
+		EXPECT_EQ(actionGrp1.getDescription(), actionGrp2.getDescription());
+		EXPECT_EQ(actionGrp1.run(), actionGrp2.run());
+		EXPECT_EQ(2, ActionGroup::instanceCount);
+		EXPECT_EQ(2, NullAction::instanceCount);
+		EXPECT_EQ(2, InputEvent::instanceCount);
+	}
+	expectStartEndInstaneCounts();
+}
 
 // DEATH TEST#endif /* NULLACTIONTEST_H_ */
 // this test will cause the assert to trigger and fail the test
 // Arduino does not allow for threads so we cannot use DEATH_TEST
 /*
- TEST(ActionGroupTest, invalidEventOnActionConstruction) {
- // null event pointer
- NullAction action1 = NullAction(NULL);
- "
- // pointer to NULL
- InputEvent* pNullEvent = NULL;
- NullAction action2 = NullAction(pNullEvent);
+TEST(ActionGroupTest, invalidEventOnActionConstruction)
+{
+	// null action
+	ActionGroup actionGrp1 = ActionGroup(1, NULL, defaultDescription);
 
- }
- */
+	// null action pointer
+	ActionGroup* pActionGrp = NULL;
+	ActionGroup actionGrp2 = ActionGroup(1, pActionGrp, defaultDescription);
+}
+*/
 
 // Test class run
 TEST(ActionGroupTest, actionRun)
 {
 	ActionGroup actionGrp1 = makeActionGroup();
 
-	EXPECT_EQ(0, actionGrp1.run());
+	EXPECT_EQ(28, actionGrp1.run());
 }
 
 TEST(ActionGroupTest, setGetActionDescription)
