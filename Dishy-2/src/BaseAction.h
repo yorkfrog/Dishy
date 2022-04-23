@@ -23,12 +23,13 @@ public:
 
 public:
 	//Action();
-	BaseAction(InputEvent* event) ;
+	BaseAction(int id, InputEvent* event) ;
 	BaseAction(const BaseAction &other) ;
 
 	virtual BaseAction& operator=(const BaseAction &other);
 	virtual ~BaseAction() ;
 	virtual string toString() const ;
+	virtual int getId() const;
 	virtual void setDescription(const string desc) ;
 	virtual string getDescription() const ;
 
@@ -38,7 +39,7 @@ public:
 private:
 	InputEvent* _pEvent;
 	string _description;
-
+	int _id;
 };
 
 

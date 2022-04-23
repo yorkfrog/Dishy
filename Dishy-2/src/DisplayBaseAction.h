@@ -17,7 +17,7 @@ private:
 	int _buttonNumber;
 
 public:
-	DisplayAction(int buttonNum, InputEvent *event);
+	DisplayAction(int id, int buttonNum, InputEvent *event);
 	DisplayAction::DisplayAction(const DisplayAction &other);
 
 	virtual ~DisplayAction();

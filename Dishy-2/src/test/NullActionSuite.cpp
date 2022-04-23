@@ -11,6 +11,7 @@
 
 namespace NullActionTestNS {
 
+const int defActionId = 10;
 
 // Test class instantiation
 TEST_F(NullActionTest, classConstructionFromEventObject)
@@ -20,11 +21,12 @@ TEST_F(NullActionTest, classConstructionFromEventObject)
 	EXPECT_EQ(0, NullAction::instanceCount);
 	{
 		InputEvent event2 = InputEvent(2, 'b');
-		NullAction action = NullAction(&event2);
-		const int defaultId = 1;
-		int defaultIdXX = 1;
+		NullAction action = NullAction(defActionId, &event2);
 		EXPECT_NE(&action, NULL);
 		EXPECT_EQ(typeid(NullAction), typeid(action));
+		EXPECT_EQ(action.getId(), defActionId);
+		EXPECT_EQ(action.getEvent()->getId(), event2.getId());
+		EXPECT_EQ(action.getDescription(), "");
 		EXPECT_EQ(1, NullAction::instanceCount);
 	}
 	EXPECT_EQ(0, NullAction::instanceCount);
@@ -38,9 +40,12 @@ TEST_F(NullActionTest, classConstructionFromEventNewPointer)
 	EXPECT_EQ(0, NullAction::instanceCount);
 	{
 		InputEvent *pEvent1 = new InputEvent(1, 'a');
-		NullAction action = NullAction(pEvent1);
+		NullAction action = NullAction(defActionId, pEvent1);
 		EXPECT_NE(&action, NULL);
 		EXPECT_EQ(typeid(NullAction), typeid(action));
+		EXPECT_EQ(action.getId(), defActionId);
+		EXPECT_EQ(action.getEvent()->getId(), pEvent1->getId());
+		EXPECT_EQ(action.getDescription(), "");
 		EXPECT_EQ(1, NullAction::instanceCount);
 		delete pEvent1;
 	}
@@ -55,7 +60,7 @@ TEST_F(NullActionTest, classCopyConstruction)
 	EXPECT_EQ(0, NullAction::instanceCount);
 	{
 		InputEvent event1 = InputEvent(1, 'a');
-		NullAction action = NullAction(&event1);
+		NullAction action = NullAction(defActionId, &event1);
 		NullAction action2 = NullAction(action);
 		EXPECT_EQ(2, NullAction::instanceCount);
 		EXPECT_EQ(4, InputEvent::instanceCount);
@@ -74,9 +79,9 @@ TEST_F(NullActionTest, classOperatorEquals)
 	EXPECT_EQ(0, NullAction::instanceCount);
 	{
 		InputEvent event1 = InputEvent(1, 'a');
-		NullAction action1 = NullAction(&event1);
+		NullAction action1 = NullAction(defActionId, &event1);
 		InputEvent event3 = InputEvent(3, 'c');
-		NullAction action3 = NullAction(&event3);
+		NullAction action3 = NullAction(defActionId, &event3);
 
 		EXPECT_NE(action1.getEvent()->getId(), action3.getEvent()->getId());
 		EXPECT_NE(action1.getEvent()->getData(), action3.getEvent()->getData());
@@ -117,7 +122,7 @@ TEST_F(NullActionTest, classOperatorEquals)
 TEST_F(NullActionTest, actionRun)
 {
 
-	NullAction action = NullAction(gDefaultEvent);
+	NullAction action = NullAction(defActionId, gDefaultEvent);
 	EXPECT_NE(&action, NULL);
 
 	EXPECT_EQ(0, action.run());
@@ -127,7 +132,7 @@ TEST_F(NullActionTest, actionRun)
 TEST_F(NullActionTest, setGetActionDescription)
 {
 
-	NullAction action = NullAction(gDefaultEvent);
+	NullAction action = NullAction(defActionId, gDefaultEvent);
 	string desc = "TestDesc";
 	action.setDescription(desc);
 	EXPECT_EQ(desc, action.getDescription());
@@ -145,8 +150,8 @@ TEST_F(NullActionTest, noActionConstructionMemoryLeak)
 		InputEvent event1 = InputEvent(1, 'a');
 		InputEvent *pEvent2 = new InputEvent(2, 'b');
 
-		NullAction action1 = NullAction(&event1);
-		NullAction action2 = NullAction(pEvent2);
+		NullAction action1 = NullAction(defActionId, &event1);
+		NullAction action2 = NullAction(defActionId, pEvent2);
 		Action *action = &action2;
 		EXPECT_EQ(5, InputEvent::instanceCount);
 		EXPECT_EQ(2, NullAction::instanceCount);
@@ -163,7 +168,7 @@ TEST_F(NullActionTest, clone)
 	EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
 	{
 		InputEvent event1 = InputEvent(1, 'a');
-		NullAction action1 = NullAction(&event1);
+		NullAction action1 = NullAction(defActionId, &event1);
 
 		string desc = "my null action";
 		action1.setDescription(desc);
@@ -190,7 +195,7 @@ TEST(ActionInterfaceTest, runViaAction)
 	char data = 'c';
 	InputEvent gDefaultEvent = InputEvent(id, data);
 
-	NullAction action = NullAction(&gDefaultEvent);
+	NullAction action = NullAction(defActionId, &gDefaultEvent);
 
 	Action *bAction = &action;
 	EXPECT_EQ(1, NullAction::instanceCount);

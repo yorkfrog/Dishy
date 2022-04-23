@@ -5,15 +5,13 @@
  *      Author: colin
  */
 //#define DEBUG
-
 #include <iostream>
 #include <sstream>
 using namespace std;
 
 #include "DisplayBaseAction.h"
 
-DisplayAction::DisplayAction(int buttonNum, InputEvent *event):
-		BaseAction(event)
+DisplayAction::DisplayAction(int id, int buttonNum, InputEvent *event) : BaseAction(id, event)
 
 {
 #ifdef DEBUG
@@ -23,8 +21,8 @@ DisplayAction::DisplayAction(int buttonNum, InputEvent *event):
 	_buttonNumber = buttonNum;
 }
 
-DisplayAction::DisplayAction(const DisplayAction &other) :
-		BaseAction(other) {
+DisplayAction::DisplayAction(const DisplayAction &other) : BaseAction(other)
+{
 #ifdef DEBUG
 	cout << "   # DisplayAction  COPY contructor, from (" << &other
 			<< "), to (" << this << ")" << endl;
@@ -33,28 +31,33 @@ DisplayAction::DisplayAction(const DisplayAction &other) :
 
 }
 
-DisplayAction::~DisplayAction() {
+DisplayAction::~DisplayAction()
+{
 #ifdef DEBUG
 	cout << "   # DisplayAction destructor on (" << this << ")" << endl;
 #endif
 }
 
 // the caller is responsible for free the memory allocated to this cloned object.
-Action* DisplayAction::clone() const {
+Action* DisplayAction::clone() const
+{
 	return new DisplayAction(*this);
 }
 
-int DisplayAction::run() {
+int DisplayAction::run()
+{
 	cout << "run DisplayAction::" << this->toString() << endl;
 	return 0;
 }
 
-int DisplayAction::getButtonNumber() const {
+int DisplayAction::getButtonNumber() const
+{
 	return _buttonNumber;
 }
 
-string DisplayAction::toString() const {
-	stringstream ss ;
+string DisplayAction::toString() const
+{
+	stringstream ss;
 	ss << BaseAction::toString() << "[btn #:" << _buttonNumber << "]";
 	return ss.str();
 }

@@ -14,7 +14,7 @@
 class NullAction: public virtual Action, public BaseAction
 {
 public:
-	NullAction(InputEvent* event);
+	NullAction(int id, InputEvent* event);
 	NullAction::NullAction(const NullAction &other);
 
 	virtual ~NullAction();

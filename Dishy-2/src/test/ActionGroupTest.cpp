@@ -13,7 +13,7 @@
 		id = 1;
 		data = 'c';
 		gpInputEvent = new InputEvent(id, data);
-		gpNullAction = new NullAction(gpInputEvent);
+		gpNullAction = new NullAction(-1, gpInputEvent);
 	}
 
 	void ActionGroupTest::TearDown() {

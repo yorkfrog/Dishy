@@ -18,10 +18,11 @@ using namespace std;
 
 int ActionGroup::instanceCount = 0;
 
-ActionGroup::ActionGroup(int maxActions, string desc)
+ActionGroup::ActionGroup(int id, int maxActions, string desc)
 {
 	instanceCount++;
 	assert(maxActions > 0);
+	_id = id;
 	_pTheAction = NULL;
 	_maxActions = maxActions;
 	_description = desc;
@@ -32,12 +33,13 @@ ActionGroup::ActionGroup(int maxActions, string desc)
 }
 
 // this object will delete the action object on destruction
-ActionGroup::ActionGroup(int maxActions, Action *action, string desc)
+ActionGroup::ActionGroup(int id, int maxActions, Action *action, string desc)
 {
 	instanceCount++;
 	assert(maxActions > 0);
 	assert(action != NULL);
 
+	_id = id;
 	_pTheAction = action->clone();
 	_maxActions = maxActions;
 	_description = desc;
@@ -51,6 +53,7 @@ ActionGroup::ActionGroup(const ActionGroup &other)
 	assert(&other != NULL);
 	instanceCount++;
 
+	_id = other._id;
 	_pTheAction = other._pTheAction->clone();
 	_maxActions = other._maxActions;
 	_description = other._description;
@@ -72,6 +75,7 @@ ActionGroup& ActionGroup::operator=(const ActionGroup &other) {
 		// 3: assign the new memory to the object
 		_pTheAction = pNewAction;
 		_maxActions = other._maxActions;
+		_id = other._id;
 		_description = other._description;
 	}
 	// by convention, always return *this
@@ -101,6 +105,11 @@ int ActionGroup::getMaxActions() const
 	return _maxActions;
 }
 
+int ActionGroup::getId() const
+{
+	return _id;
+}
+
 // this object will delete the action object on destruction
 void ActionGroup::addAction(Action *action)
 {
@@ -114,7 +123,7 @@ void ActionGroup::addAction(Action *action)
 string ActionGroup::toString() const
 {
 	stringstream ss;
-	ss << "ActionGroup[" << _description << "][" << _maxActions << "]";
+	ss << "ActionGroup[" << _id << "][" << _description << "][" << _maxActions << "]";
 	return ss.str();
 }
 

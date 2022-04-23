@@ -11,7 +11,7 @@ using namespace std;
 
 #include "NullAction.h"
 
-NullAction::NullAction(InputEvent* event): BaseAction(event) {
+NullAction::NullAction(int id, InputEvent* event): BaseAction(id, event) {
 #ifdef DEBUG
 	cout << "   # NullAction contructor (" << this << "), id:" << event->getId() << endl;
 #endif

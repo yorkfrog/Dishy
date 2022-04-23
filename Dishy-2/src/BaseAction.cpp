@@ -23,10 +23,11 @@ using namespace std;
 
 int BaseAction::instanceCount = 0;
 
-BaseAction::BaseAction(InputEvent* event) {
+BaseAction::BaseAction(int id, InputEvent* event) {
 	// ensure we always get a non-NULL event ptr.
 	assert(event != NULL);
 	instanceCount++;
+	_id = id;
 	_pEvent = new InputEvent(*event);
 	_description = "";
 
@@ -37,6 +38,7 @@ BaseAction::BaseAction(InputEvent* event) {
 
 BaseAction::BaseAction(const BaseAction& other) {
 	instanceCount++;
+	_id = other._id;
 	_pEvent = new InputEvent(*(other._pEvent));
 	_description = other._description;
 
@@ -57,6 +59,7 @@ BaseAction& BaseAction::operator=(const BaseAction &other) {
 		delete _pEvent;
 
 		// 3: assign the new memory to the object
+		_id = other._id;
 		_pEvent = pNewEvent;
 		_description = other._description;
 	}
@@ -73,6 +76,9 @@ BaseAction::~BaseAction() {
 #endif
 }
 
+int BaseAction::getId() const {
+	return _id;
+}
 
 void BaseAction::setDescription(const string desc) {
 	_description = desc;

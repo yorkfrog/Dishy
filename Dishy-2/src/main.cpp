@@ -15,7 +15,6 @@ using namespace std;
 
 #include "Arduino.h"
 
-//#include "CoutLogger.h"
 
 void doExit();
 void assertNoMemoryLeak();
@@ -25,11 +24,19 @@ bool isValidInput(InputEvent *pInputEvent);
 void setup()
 {
 
-//	Logger* logger = new CoutLogger();
-//	logger->log("**** TEST *(******");
-
 	pinMode(LED_BUILTIN, OUTPUT);
 }
+
+
+============================
+
+		/*
+		 * 1 - add actions to array in ActionGroup
+		 * 2 - learn about smart pointers
+		 * 3 - convert to smart pointers
+		 * Go to NFT's
+		 */
+
 
 void loop()
 {
@@ -71,7 +78,6 @@ void dispatchEvent(InputEvent *pInputEvent)
 {
 	Action *pAction = NULL;
 
-
 	pAction = getAction(*pInputEvent);
 
 	cout << "------------------" << endl;
@@ -79,7 +85,6 @@ void dispatchEvent(InputEvent *pInputEvent)
 	delete pAction;
 	cout << "Action result:" << actionResult << endl;
 	cout << "------------------" << endl;
-
 }
 
 // caller must free Action memory.
@@ -96,24 +101,24 @@ Action* getAction(InputEvent &event)
 
 	switch (event.getId()) {
 	case InputEvent::btn1pressEvent:
-		singleAction = new DisplayAction(1, &event);
-		newActionGrp = new ActionGroup(1, singleAction, "Group1");
+		singleAction = new DisplayAction(-1, 1, &event);
+		newActionGrp = new ActionGroup(100, 10, singleAction, "Group1");
 		break;
 	case InputEvent::btn2pressEvent:
-		singleAction = new DisplayAction(2, &event);
-		newActionGrp = new ActionGroup(1, singleAction, group2Desc);
+		singleAction = new DisplayAction(-2, 2, &event);
+		newActionGrp = new ActionGroup(200, 20, singleAction, group2Desc);
 		break;
 	case InputEvent::btn3pressEvent:
-		singleAction = new DisplayAction(3, &event);
-		newActionGrp = new ActionGroup(1, singleAction, group2Desc);
+		singleAction = new DisplayAction(-3, 3, &event);
+		newActionGrp = new ActionGroup(300, 30, singleAction, group2Desc);
 		break;
 	case InputEvent::btn4pressEvent:
-		singleAction = new NullAction(&event);
-		newActionGrp = new ActionGroup(1, singleAction, group2Desc);
+		singleAction = new NullAction(1,&event);
+		newActionGrp = new ActionGroup(400, 40, singleAction, group2Desc);
 		break;
 	default:
-		singleAction = new NullAction(&event);
-		newActionGrp = new ActionGroup(1, singleAction, group2Desc);
+		singleAction = new NullAction(2,&event);
+		newActionGrp = new ActionGroup(-10, -1, singleAction, group2Desc);
 		cout << "NEW ACTION:" << newActionGrp->toString();
 		break;
 	}

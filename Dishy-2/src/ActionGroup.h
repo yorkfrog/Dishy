@@ -19,13 +19,14 @@ private:
 	Action* _pTheAction;
 	int _maxActions;
 	string _description;
+	int _id;
 
 public:
 	static int instanceCount;
 
 public:
-	ActionGroup(int maxActions, string desc);
-	ActionGroup(int maxActions, Action* action, string desc);
+	ActionGroup(int id, int maxActions, string desc);
+	ActionGroup(int id, int maxActions, Action* action, string desc);
 
 	ActionGroup(const ActionGroup &other);
 	ActionGroup& operator=(const ActionGroup &other) ;
@@ -33,6 +34,7 @@ public:
 	virtual ~ActionGroup();
 	virtual Action* clone() const;
 
+	virtual int getId() const;
 	virtual int run();
 	virtual string toString() const;
 	virtual void setDescription(const string desc) ;
