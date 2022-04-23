@@ -122,16 +122,16 @@ TEST(ActionGroupTest, classOperatorEquals)
 // this test will cause the assert to trigger and fail the test
 // Arduino does not allow for threads so we cannot use DEATH_TEST
 /*
-TEST(ActionGroupTest, invalidEventOnActionConstruction)
-{
-	// null action
-	ActionGroup actionGrp1 = ActionGroup(1, NULL, defaultDescription);
+ TEST(ActionGroupTest, invalidEventOnActionConstruction)
+ {
+ // null action
+ ActionGroup actionGrp1 = ActionGroup(1, NULL, defaultDescription);
 
-	// null action pointer
-	ActionGroup* pActionGrp = NULL;
-	ActionGroup actionGrp2 = ActionGroup(1, pActionGrp, defaultDescription);
-}
-*/
+ // null action pointer
+ ActionGroup* pActionGrp = NULL;
+ ActionGroup actionGrp2 = ActionGroup(1, pActionGrp, defaultDescription);
+ }
+ */
 
 // Test class run
 TEST(ActionGroupTest, actionRun)
@@ -179,38 +179,28 @@ TEST(ActionGroupTest, noActionConstructionMemoryLeak)
 	expectStartEndInstaneCounts();
 }
 
-/*
- TEST_F(ActionGroupTest, clone) {
- // the Test Fixture creates an InputEvent instance which we won;t use.
- EXPECT_EQ(1, InputEvent::instanceCount) << "Check 0 InputEvent instance on entry.";
- EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
- {
- InputEvent event1 = InputEvent(1, 'a');
- NullAction action1 = NullAction(&event1);
+TEST(ActionGroupTest, clone)
+{
+	expectStartEndInstaneCounts();
+	{
+		string groupDesc = "Cloned Group Description";
+		ActionGroup actionGrp1 = makeActionGroup(2, groupDesc);
 
- string desc = "my null action";
- action1.setDescription(desc);
- Action *pAction1 = &action1;
+		Action *pActionGrpClone = actionGrp1.clone();
 
- Action *pActionClone = pAction1->clone();
- EXPECT_NE(pAction1, pActionClone);
- EXPECT_EQ(pActionClone->getDescription(), action1.getDescription());
- EXPECT_EQ(pActionClone->run(), action1.run());
+		EXPECT_NE(pActionGrpClone, &actionGrp1);
+		EXPECT_EQ(pActionGrpClone->getDescription(), actionGrp1.getDescription());
+		EXPECT_EQ(pActionGrpClone->run(), actionGrp1.run());
+		EXPECT_EQ(pActionGrpClone->run(), actionGrp1.run());
+		EXPECT_EQ(2, ActionGroup::instanceCount);
+		EXPECT_EQ(2, NullAction::instanceCount);
+		EXPECT_EQ(2, InputEvent::instanceCount);
 
- EXPECT_EQ(4, InputEvent::instanceCount);
- EXPECT_EQ(2, NullAction::instanceCount);
-
- delete pActionClone;
- }
- EXPECT_EQ(1, InputEvent::instanceCount);
- EXPECT_EQ(0, NullAction::instanceCount);
- }
-
-
- */
-
+		delete pActionGrpClone;
+	}
+	expectStartEndInstaneCounts();
 }
-;
-// end namesapce
+
+} // end namesapce
 
 #endif

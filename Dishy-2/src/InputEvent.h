@@ -11,6 +11,8 @@
 #include <iostream>
 using namespace std;
 
+#include "environment.h"
+
 class InputEvent {
 
 public:

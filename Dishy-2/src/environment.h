@@ -20,7 +20,15 @@
 #ifndef ENVIRONMENT_H_
 #define ENVIRONMENT_H_
 
+// define this to allow debug logging in code.
+//#define DEBUG_OUT
 
+#ifdef DEBUG_OUT
+#define LOG_DEBUG(...) cout << __VA_ARGS__
+#endif
+#ifndef DEBUG_OUT
+#define LOG_DEBUG(...)
+#endif
 
 #define LOCAL_ENV 100
 //#define MCU_ENV 200

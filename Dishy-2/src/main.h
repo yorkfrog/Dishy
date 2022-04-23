@@ -22,7 +22,7 @@
 
 void setup() ;
 void loop();
-InputEvent getEventForInput(char input);
+InputEvent* getEventForInput(char input);
 
 Action*  getAction(InputEvent &event);
 

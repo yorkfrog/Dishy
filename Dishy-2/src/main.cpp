@@ -13,56 +13,81 @@ using namespace std;
 #define NDEBUG
 #include <assert.h>     /* assert */
 
-
 #include "Arduino.h"
 
-void doExit(Action* pAction);
-void assertNoMemoryLeak();
+//#include "CoutLogger.h"
 
-void setup() {
+void doExit();
+void assertNoMemoryLeak();
+void dispatchEvent(InputEvent *pInputEvent);
+bool isValidInput(InputEvent *pInputEvent);
+
+void setup()
+{
+
+//	Logger* logger = new CoutLogger();
+//	logger->log("**** TEST *(******");
+
 	pinMode(LED_BUILTIN, OUTPUT);
 }
 
+void loop()
+{
 
-void loop() {
+	{ // memory tracking block
+		char input = '\0';
+		input = readInput();
 
-	char input = '\0';
-	Action *pAction = NULL;
+		InputEvent* pInputEvent = getEventForInput(input);
 
-	input = readInput();
-
-	InputEvent inputEvent = getEventForInput(input);
-
-
-	if (inputEvent.getId() == InputEvent::invalidEvent && inputEvent.getData() == 'x') {
-		doExit(pAction);
-
-	} else if (inputEvent.getId() == InputEvent::invalidEvent) {
-		cout << "Invalid input " << inputEvent.getData() << endl;;
-
-	} else {
-
-		pAction = getAction(inputEvent);
-
-		cout << "Action RUN ..." << endl;
-
-		int actionResult = pAction->run();
-		delete pAction;
-
-		cout << "Action result:" << actionResult << endl;
-
+		if (isValidInput(pInputEvent))
+		{
+			dispatchEvent(pInputEvent);
+		}
+		delete pInputEvent;
 	}
 
 	assertNoMemoryLeak();
 
 }
 
+bool isValidInput(InputEvent *pInputEvent)
+{
+	bool result = true;
+	if (pInputEvent->getId() == InputEvent::invalidEvent && pInputEvent->getData() == 'x')
+	{
+		delete pInputEvent;
+		doExit();
+	}
+	else if (pInputEvent->getId() == InputEvent::invalidEvent)
+	{
+		cout << "Invalid input " << pInputEvent->getData() << endl;
+		result = false;
+	}
+	return result;
+}
 
-Action* getAction(InputEvent &event) {
+void dispatchEvent(InputEvent *pInputEvent)
+{
+	Action *pAction = NULL;
 
-	Action* newAction = NULL;
-	Action* singleAction = NULL;
-	ActionGroup* newGrpAction = NULL;
+
+	pAction = getAction(*pInputEvent);
+
+	cout << "------------------" << endl;
+	int actionResult = pAction->run();
+	delete pAction;
+	cout << "Action result:" << actionResult << endl;
+	cout << "------------------" << endl;
+
+}
+
+// caller must free Action memory.
+Action* getAction(InputEvent &event)
+{
+
+	Action *singleAction = NULL;
+	ActionGroup *newActionGrp = NULL;
 	string group1Desc = "Group1";
 	string group2Desc = "Group2";
 	string group3Desc = "Group3";
@@ -72,27 +97,33 @@ Action* getAction(InputEvent &event) {
 	switch (event.getId()) {
 	case InputEvent::btn1pressEvent:
 		singleAction = new DisplayAction(1, &event);
-		newAction = new ActionGroup(1, singleAction, "Group1");
+		newActionGrp = new ActionGroup(1, singleAction, "Group1");
 		break;
 	case InputEvent::btn2pressEvent:
 		singleAction = new DisplayAction(2, &event);
-		newAction = new ActionGroup(1, singleAction, group2Desc);
+		newActionGrp = new ActionGroup(1, singleAction, group2Desc);
 		break;
 	case InputEvent::btn3pressEvent:
-		newAction = new DisplayAction(3, &event);
+		singleAction = new DisplayAction(3, &event);
+		newActionGrp = new ActionGroup(1, singleAction, group2Desc);
 		break;
 	case InputEvent::btn4pressEvent:
-		newAction = new NullAction(&event);
+		singleAction = new NullAction(&event);
+		newActionGrp = new ActionGroup(1, singleAction, group2Desc);
 		break;
 	default:
-		newAction = new NullAction(&event);
-		cout << "NEW ACTION:" << newAction->toString();
+		singleAction = new NullAction(&event);
+		newActionGrp = new ActionGroup(1, singleAction, group2Desc);
+		cout << "NEW ACTION:" << newActionGrp->toString();
 		break;
 	}
-	return newAction;
+	delete singleAction;
+	return newActionGrp;
 }
 
-InputEvent getEventForInput(char input) {
+// caller must free InputEvent memory.
+InputEvent* getEventForInput(char input)
+{
 	int eventType = InputEvent::invalidEvent;
 	switch (input) {
 	case '1':
@@ -110,22 +141,31 @@ InputEvent getEventForInput(char input) {
 	default:
 		break;
 	}
-	return InputEvent(eventType, input);
+	return new InputEvent(eventType, input);
 }
 
-void assertNoMemoryLeak() {
-	if (BaseAction::instanceCount > 0) {
-		cout << "**** MEMORY LEAK - ACTION INSTANCE COUNT should be Zero, but == [" << BaseAction::instanceCount << "]"<< endl;
+void assertNoMemoryLeak()
+{
+	if (ActionGroup::instanceCount > 0)
+	{
+		cout << "**** MEMORY LEAK - ActionGroup instance count != 0, Actual:[" << ActionGroup::instanceCount << "]" << endl;
+	}
+	if (BaseAction::instanceCount > 0)
+	{
+		cout << "**** MEMORY LEAK - BaseAction instance count != 0, Actual:[" << BaseAction::instanceCount << "]" << endl;
+	}
+
+	if (InputEvent::instanceCount > 0)
+	{
+		cout << "**** MEMORY LEAK - InputEvent instance count != 0, Actual:[" << InputEvent::instanceCount << "]" << endl;
 	}
 	assert(BaseAction::instanceCount == 0);
 }
 
-
-void doExit(Action* pAction) {
-	cout << "EXIT 1 -- ACTION INSTANCE COUNT == [" << BaseAction::instanceCount<< "]" << endl;
-	if (BaseAction::instanceCount > 0) {
-		delete pAction;
-	}
-	cout << "EXIT 2 -- ACTION INSTANCE COUNT == [" << BaseAction::instanceCount << "]" << endl;
+void doExit()
+{
+	cout << "all done!" << endl;
+	assertNoMemoryLeak();
 	exit(0);
 }
+

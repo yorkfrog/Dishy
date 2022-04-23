@@ -4,7 +4,8 @@
  *  Created on: 19 Apr 2022
  *      Author: colin
  */
-#define DEBUG
+//#define DEBUG
+
 // define NDEBUG to turn off assert()
 //#define NDEBUG
 #include <assert.h>
@@ -37,7 +38,6 @@ ActionGroup::ActionGroup(int maxActions, Action *action, string desc)
 	assert(maxActions > 0);
 	assert(action != NULL);
 
-	// FIXME - use copy c'tor for Action - but do we need to know the type of the Action to call it s c'tor?????
 	_pTheAction = action->clone();
 	_maxActions = maxActions;
 	_description = desc;
@@ -59,7 +59,6 @@ ActionGroup::ActionGroup(const ActionGroup &other)
 #endif
 }
 
-// #FIXME - need operator= too.
 ActionGroup& ActionGroup::operator=(const ActionGroup &other) {
 
 	cout << "# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl;
@@ -91,13 +90,10 @@ ActionGroup::~ActionGroup()
 	instanceCount--;
 }
 
+// the caller is responsible for free the memory allocated to this cloned object.
 Action* ActionGroup::clone() const
 {
-	instanceCount++;
-	// #FIXME need Clone function
-//	assert(false);
 	return new ActionGroup(*this);
-//	return new DisplayAction(*this);
 }
 
 int ActionGroup::getMaxActions() const
@@ -124,8 +120,6 @@ string ActionGroup::toString() const
 
 int ActionGroup::run()
 {
-//	cout << "run " << toString() << " " << _pTheAction->toString() << endl;
-	// TODO debug
 	cout << "run " << toString() << " " << _pTheAction << endl;
 	return _pTheAction->run();
 }

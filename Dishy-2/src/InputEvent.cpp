@@ -6,8 +6,6 @@
  */
 
 
-//#define  DEBUG
-
 #include "InputEvent.h"
 
 #include <iostream>
@@ -17,23 +15,17 @@ using namespace std;
 int InputEvent::instanceCount = 0;
 
 InputEvent::InputEvent(int8_t id, char data): _id(id), _data(data) {
-#ifdef DEBUG
-	cout << "   # InputEvent contructor (" << this << "), id:" << _id << ",data:" << _data << endl;
-#endif
+	LOG_DEBUG("   # InputEvent contructor (" << this << "), id:" << _id << ",data:" << _data << endl);
 	instanceCount++;
 }
 
 InputEvent::InputEvent(const InputEvent &other): _id(other._id), _data(other._data) {
-#ifdef DEBUG
-	cout << "   # COPY InputEvent contructor from (" << &other << "), to (" << this << "), id:" << _id << endl;
-#endif
+	LOG_DEBUG("   # COPY InputEvent contructor from (" << &other << "), to (" << this << "), id:" << _id << endl);
 	instanceCount++;
 }
 
 InputEvent::~InputEvent() {
-#ifdef DEBUG
-	cout << "   # InputEvent destructor on (" << this << "), id:" << _id << endl;
-#endif
+	LOG_DEBUG("   # InputEvent destructor on (" << this << "), id:" << _id << endl);
 	instanceCount--;
 }
 
