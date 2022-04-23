@@ -15,11 +15,15 @@ using namespace std;
 
 #include "ActionGroup.h"
 
+int ActionGroup::instanceCount = 0;
+
 ActionGroup::ActionGroup(int maxActions, string desc) {
+	instanceCount++;
 	assert(maxActions > 0);
 	_pTheAction = NULL;
 	_maxActions = maxActions;
 	_description = desc;
+
 #ifdef DEBUG
 	cout << "   # DEF ActionGroup constructor (" << this << ")" << endl;
 #endif
@@ -27,6 +31,7 @@ ActionGroup::ActionGroup(int maxActions, string desc) {
 
 // this object will delete the action object on destruction
 ActionGroup::ActionGroup(int maxActions, Action* action, string desc) {
+	instanceCount++;
 	assert(maxActions > 0);
 	assert(action != NULL);
 
@@ -40,6 +45,7 @@ ActionGroup::ActionGroup(int maxActions, Action* action, string desc) {
 }
 
 ActionGroup::ActionGroup(const ActionGroup &other) {
+	instanceCount++;
 	assert(&other != NULL);
 
 	// FIXME : we are copying another object pointer here that ActionGroup is responsible for
@@ -70,9 +76,11 @@ ActionGroup::~ActionGroup() {
 #ifdef DEBUG
 	cout << "   # ActionGroup destructor on (" << this << ")" << endl;
 #endif
+	instanceCount--;
 }
 
 Action* ActionGroup::clone() const {
+	instanceCount++;
 	// #FIXME need Clone function
 //	assert(false);
 	return new ActionGroup(*this);

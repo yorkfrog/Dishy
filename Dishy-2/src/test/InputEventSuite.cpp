@@ -1,12 +1,13 @@
-
 #ifdef UNITTEST
 #include "gtest.h"
 #include "../InputEvent.h"
 #include "../main.h"
 
+namespace InputEventTestTestNS {
 
 // Test class
-TEST(InputEventTest, classConstruction) {
+TEST(InputEventTest, classConstruction)
+{
 
 	int id = 1;
 	char data = 'c';
@@ -27,7 +28,8 @@ TEST(InputEventTest, classConstruction) {
 }
 
 // valid char input
-TEST(InputEventTest, getInputEventFromValidInput) {
+TEST(InputEventTest, getInputEventFromValidInput)
+{
 
 	InputEvent event = getEventForInput('1');
 	EXPECT_EQ(InputEvent::btn1pressEvent, event.getId());
@@ -47,7 +49,8 @@ TEST(InputEventTest, getInputEventFromValidInput) {
 }
 
 // Invalid char input
-TEST(InputEventTest, getInputActionFromInvalidInput) {
+TEST(InputEventTest, getInputActionFromInvalidInput)
+{
 
 	InputEvent event = getEventForInput('0');
 	EXPECT_EQ(typeid(InputEvent), typeid(event));
@@ -79,16 +82,18 @@ TEST(InputEventTest, getInputActionFromInvalidInput) {
 	EXPECT_EQ('\0', event.getData());
 }
 
-TEST(InputEventTest, noConstructionMemoryLeak) {
+TEST(InputEventTest, noConstructionMemoryLeak)
+{
 	EXPECT_EQ(0, InputEvent::instanceCount);
 	{
 		InputEvent event1 = InputEvent(1, 'c');
 		InputEvent event2 = InputEvent(2, 'x');
-		InputEvent* pEvent = &event2;
+		InputEvent *pEvent = &event2;
 		EXPECT_EQ(2, InputEvent::instanceCount);
 	}
 	EXPECT_EQ(0, InputEvent::instanceCount);
 }
 
+} // end namespace
 
 #endif

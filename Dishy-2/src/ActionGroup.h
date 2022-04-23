@@ -21,6 +21,9 @@ private:
 	string _description;
 
 public:
+	static int instanceCount;
+
+public:
 	ActionGroup(int maxActions, string desc);
 	ActionGroup(int maxActions, Action* action, string desc);
 

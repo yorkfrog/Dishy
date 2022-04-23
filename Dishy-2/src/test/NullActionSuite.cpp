@@ -9,8 +9,12 @@
 #include "../NullAction.h"
 #include "../main.h"
 
+namespace NullActionTestNS {
+
+
 // Test class instantiation
-TEST_F(NullActionTest, classConstructionFromEventObject) {
+TEST_F(NullActionTest, classConstructionFromEventObject)
+{
 
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
@@ -25,7 +29,8 @@ TEST_F(NullActionTest, classConstructionFromEventObject) {
 	EXPECT_EQ(1, InputEvent::instanceCount);
 }
 
-TEST_F(NullActionTest, classConstructionFromEventNewPointer) {
+TEST_F(NullActionTest, classConstructionFromEventNewPointer)
+{
 
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
@@ -41,7 +46,8 @@ TEST_F(NullActionTest, classConstructionFromEventNewPointer) {
 	EXPECT_EQ(1, InputEvent::instanceCount);
 }
 
-TEST_F(NullActionTest, classCopyConstruction) {
+TEST_F(NullActionTest, classCopyConstruction)
+{
 	// copy constructor
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
@@ -59,7 +65,8 @@ TEST_F(NullActionTest, classCopyConstruction) {
 	EXPECT_EQ(1, InputEvent::instanceCount);
 }
 
-TEST_F(NullActionTest, classOperatorEquals) {
+TEST_F(NullActionTest, classOperatorEquals)
+{
 	// copy constructor
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
@@ -105,7 +112,8 @@ TEST_F(NullActionTest, classOperatorEquals) {
  */
 
 // Test class run
-TEST_F(NullActionTest, actionRun) {
+TEST_F(NullActionTest, actionRun)
+{
 
 	NullAction action = NullAction(gDefaultEvent);
 	EXPECT_NE(&action, NULL);
@@ -114,7 +122,8 @@ TEST_F(NullActionTest, actionRun) {
 
 }
 
-TEST_F(NullActionTest, setGetActionDescription) {
+TEST_F(NullActionTest, setGetActionDescription)
+{
 
 	NullAction action = NullAction(gDefaultEvent);
 	string desc = "TestDesc";
@@ -125,7 +134,8 @@ TEST_F(NullActionTest, setGetActionDescription) {
 	EXPECT_EQ("String Literal", action.getDescription());
 }
 
-TEST_F(NullActionTest, noActionConstructionMemoryLeak) {
+TEST_F(NullActionTest, noActionConstructionMemoryLeak)
+{
 	// the Test Fixture creates an InputEvent instance which we won;t use.
 	EXPECT_EQ(1, InputEvent::instanceCount) << "Check 0 InputEvent instance on entry.";
 	EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
@@ -144,7 +154,8 @@ TEST_F(NullActionTest, noActionConstructionMemoryLeak) {
 	EXPECT_EQ(0, NullAction::instanceCount);
 }
 
-TEST_F(NullActionTest, clone) {
+TEST_F(NullActionTest, clone)
+{
 	// the Test Fixture creates an InputEvent instance which we won;t use.
 	EXPECT_EQ(1, InputEvent::instanceCount) << "Check 0 InputEvent instance on entry.";
 	EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
@@ -170,7 +181,8 @@ TEST_F(NullActionTest, clone) {
 	EXPECT_EQ(0, NullAction::instanceCount);
 }
 
-TEST(ActionInterfaceTest, runViaAction) {
+TEST(ActionInterfaceTest, runViaAction)
+{
 
 	int id = 1;
 	char data = 'c';
@@ -182,7 +194,7 @@ TEST(ActionInterfaceTest, runViaAction) {
 	EXPECT_EQ(1, NullAction::instanceCount);
 }
 
-
+} // end namespace
 
 #endif
 
