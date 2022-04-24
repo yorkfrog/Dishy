@@ -20,14 +20,18 @@ TEST_F(NullActionTest, classConstructionFromEventObject)
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
 	{
-		InputEvent event2 = InputEvent(2, 'b');
-		NullAction action = NullAction(defActionId, &event2);
+		unique_ptr<InputEvent> pEvent1 = make_unique<InputEvent>(2, 'b');
+		NullAction action = NullAction(defActionId, pEvent1);
 		EXPECT_NE(&action, NULL);
 		EXPECT_EQ(typeid(NullAction), typeid(action));
 		EXPECT_EQ(action.getId(), defActionId);
-		EXPECT_EQ(action.getEvent()->getId(), event2.getId());
+
+		EXPECT_NE((action.getEvent()).get(), pEvent1.get());
+		EXPECT_EQ(action.getEvent()->getId(), pEvent1->getId());
 		EXPECT_EQ(action.getDescription(), "");
 		EXPECT_EQ(1, NullAction::instanceCount);
+
+		pEvent1.reset();
 	}
 	EXPECT_EQ(0, NullAction::instanceCount);
 	EXPECT_EQ(1, InputEvent::instanceCount);
@@ -39,15 +43,17 @@ TEST_F(NullActionTest, classConstructionFromEventNewPointer)
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
 	{
-		InputEvent *pEvent1 = new InputEvent(1, 'a');
+		unique_ptr<InputEvent> pEvent1 = make_unique<InputEvent>(1, 'a');
 		NullAction action = NullAction(defActionId, pEvent1);
 		EXPECT_NE(&action, NULL);
 		EXPECT_EQ(typeid(NullAction), typeid(action));
+
+		EXPECT_NE((action.getEvent()).get(), pEvent1.get());
 		EXPECT_EQ(action.getId(), defActionId);
 		EXPECT_EQ(action.getEvent()->getId(), pEvent1->getId());
 		EXPECT_EQ(action.getDescription(), "");
 		EXPECT_EQ(1, NullAction::instanceCount);
-		delete pEvent1;
+//		delete pEvent1;
 	}
 	EXPECT_EQ(0, NullAction::instanceCount);
 	EXPECT_EQ(1, InputEvent::instanceCount);
@@ -59,14 +65,14 @@ TEST_F(NullActionTest, classCopyConstruction)
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
 	{
-		InputEvent event1 = InputEvent(1, 'a');
-		NullAction action = NullAction(defActionId, &event1);
+		unique_ptr<InputEvent> event1 = make_unique<InputEvent>(1, 'a');
+		NullAction action = NullAction(defActionId, event1);
 		NullAction action2 = NullAction(action);
 		EXPECT_EQ(2, NullAction::instanceCount);
 		EXPECT_EQ(4, InputEvent::instanceCount);
 		EXPECT_EQ(typeid(NullAction), typeid(action2));
 		ASSERT_NE(&action, &action2);
-		ASSERT_NE(action.getEvent(), action2.getEvent())<< "Expect event is copied so event ptr's a1.event != a2.event";
+		ASSERT_NE(action.getEvent().get(), action2.getEvent().get())<< "Expect event is copied so event ptr's a1.event != a2.event";
 	}
 	EXPECT_EQ(0, NullAction::instanceCount);
 	EXPECT_EQ(1, InputEvent::instanceCount);
@@ -78,11 +84,12 @@ TEST_F(NullActionTest, classOperatorEquals)
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
 	{
-		InputEvent event1 = InputEvent(1, 'a');
-		NullAction action1 = NullAction(defActionId, &event1);
-		InputEvent event3 = InputEvent(3, 'c');
-		NullAction action3 = NullAction(defActionId, &event3);
+		unique_ptr<InputEvent> event1 = make_unique<InputEvent>(1, 'a');
+		NullAction action1 = NullAction(defActionId, event1);
+		unique_ptr<InputEvent> event3 = make_unique<InputEvent>(3, 'c');
+		NullAction action3 = NullAction(defActionId, event3);
 
+		ASSERT_NE(action1.getEvent().get(), action3.getEvent().get());
 		EXPECT_NE(action1.getEvent()->getId(), action3.getEvent()->getId());
 		EXPECT_NE(action1.getEvent()->getData(), action3.getEvent()->getData());
 		EXPECT_NE(action1.getEvent(), action3.getEvent());
@@ -93,7 +100,7 @@ TEST_F(NullActionTest, classOperatorEquals)
 
 		EXPECT_EQ(action1.getEvent()->getId(), action3.getEvent()->getId());
 		EXPECT_EQ(action1.getEvent()->getData(), action3.getEvent()->getData());
-		EXPECT_NE(action1.getEvent(), action3.getEvent());
+		ASSERT_NE(action1.getEvent().get(), action3.getEvent().get());
 
 		EXPECT_EQ(2, NullAction::instanceCount);
 		EXPECT_EQ(5, InputEvent::instanceCount);
@@ -147,15 +154,15 @@ TEST_F(NullActionTest, noActionConstructionMemoryLeak)
 	EXPECT_EQ(1, InputEvent::instanceCount) << "Check 0 InputEvent instance on entry.";
 	EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
 	{
-		InputEvent event1 = InputEvent(1, 'a');
-		InputEvent *pEvent2 = new InputEvent(2, 'b');
+		unique_ptr<InputEvent> event1 = make_unique<InputEvent>(1, 'a');
+		unique_ptr<InputEvent> pEvent2 = make_unique<InputEvent>(2, 'b');
 
-		NullAction action1 = NullAction(defActionId, &event1);
+		NullAction action1 = NullAction(defActionId, event1);
 		NullAction action2 = NullAction(defActionId, pEvent2);
 		Action *action = &action2;
 		EXPECT_EQ(5, InputEvent::instanceCount);
 		EXPECT_EQ(2, NullAction::instanceCount);
-		delete pEvent2;
+//		delete pEvent2;
 	}
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
@@ -167,8 +174,8 @@ TEST_F(NullActionTest, clone)
 	EXPECT_EQ(1, InputEvent::instanceCount) << "Check 0 InputEvent instance on entry.";
 	EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
 	{
-		InputEvent event1 = InputEvent(1, 'a');
-		NullAction action1 = NullAction(defActionId, &event1);
+		unique_ptr<InputEvent> event1 = make_unique<InputEvent>(1, 'a');
+		NullAction action1 = NullAction(defActionId, event1);
 
 		string desc = "my null action";
 		action1.setDescription(desc);
@@ -188,14 +195,17 @@ TEST_F(NullActionTest, clone)
 	EXPECT_EQ(0, NullAction::instanceCount);
 }
 
+
+
+
 TEST(ActionInterfaceTest, runViaAction)
 {
 
 	int id = 1;
 	char data = 'c';
-	InputEvent gDefaultEvent = InputEvent(id, data);
+	unique_ptr<InputEvent> gDefaultEvent = make_unique<InputEvent>(id, data);
 
-	NullAction action = NullAction(defActionId, &gDefaultEvent);
+	NullAction action = NullAction(defActionId, gDefaultEvent);
 
 	Action *bAction = &action;
 	EXPECT_EQ(1, NullAction::instanceCount);

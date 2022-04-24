@@ -1,6 +1,4 @@
 /*
- * ButtonPressAction.cpp
- *
  *  Created on: 19 Apr 2022
  *      Author: colin
  */
@@ -9,9 +7,9 @@
 #include <sstream>
 using namespace std;
 
-#include "DisplayBaseAction.h"
+#include "DisplayAction.h"
 
-DisplayAction::DisplayAction(int id, int buttonNum, InputEvent *event) : BaseAction(id, event)
+DisplayAction::DisplayAction(int id, int buttonNum, unique_ptr<InputEvent> &event) : BaseAction(id, event)
 
 {
 #ifdef DEBUG

@@ -23,12 +23,12 @@ using namespace std;
 
 int BaseAction::instanceCount = 0;
 
-BaseAction::BaseAction(int id, InputEvent* event) {
+BaseAction::BaseAction(int id, unique_ptr<InputEvent> &event) {
 	// ensure we always get a non-NULL event ptr.
 	assert(event != NULL);
 	instanceCount++;
 	_id = id;
-	_pEvent = new InputEvent(*event);
+	_pEvent = make_shared<InputEvent>(*event.get());
 	_description = "";
 
 #ifdef DEBUG
@@ -39,7 +39,8 @@ BaseAction::BaseAction(int id, InputEvent* event) {
 BaseAction::BaseAction(const BaseAction& other) {
 	instanceCount++;
 	_id = other._id;
-	_pEvent = new InputEvent(*(other._pEvent));
+	_pEvent = make_shared<InputEvent>(*(other._pEvent.get()) ) ;
+//	_pEvent = new InputEvent(*(other._pEvent.get()));
 	_description = other._description;
 
 	#ifdef DEBUG
@@ -48,33 +49,39 @@ BaseAction::BaseAction(const BaseAction& other) {
 
 }
 
+
+
 BaseAction& BaseAction::operator=(const BaseAction &other) {
 	cout << "# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl;
 	if (this != &other) { // protect against invalid self-assignment
 		cout << "#### 2" << endl;
 		// 1: allocate new memory and copy the elements
-		InputEvent *pNewEvent = new InputEvent(*(other._pEvent));
+		shared_ptr<InputEvent> pNewEvent = make_shared<InputEvent>(*(other._pEvent.get()) ) ;
 
 		// 2: deallocate old memory
-		delete _pEvent;
+		_pEvent.reset();
 
 		// 3: assign the new memory to the object
-		_id = other._id;
 		_pEvent = pNewEvent;
+		_id = other._id;
 		_description = other._description;
 	}
 	// by convention, always return *this
 	return *this;
 }
 
+
+
 BaseAction::~BaseAction() {
 	instanceCount--;
-	delete _pEvent;
-	_pEvent = NULL;
+	_pEvent.reset();
+//	delete _pEvent;
+//	_pEvent = NULL;
 #ifdef DEBUG
 	cout << "   # ACTION destructor on (" << this << "::[" << instanceCount << "]), id:" << _pEvent->getId() << endl;
 #endif
 }
+
 
 int BaseAction::getId() const {
 	return _id;
@@ -88,7 +95,7 @@ string BaseAction::getDescription() const {
 	return _description;
 }
 
-InputEvent* BaseAction::getEvent() const {
+shared_ptr<InputEvent> BaseAction::getEvent() const {
 	return _pEvent;
 }
 

@@ -12,11 +12,11 @@
 	void NullActionTest::SetUp() {
 		id = 1;
 		data = 'c';
-		gDefaultEvent = new InputEvent(id, data);
+		gDefaultEvent = make_unique<InputEvent>(id, data);
 	}
 
 	void NullActionTest::TearDown() {
-		delete gDefaultEvent;
+		// delete gDefaultEvent;
 	}
 
 

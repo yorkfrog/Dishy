@@ -11,7 +11,7 @@ using namespace std;
 
 #include "NullAction.h"
 
-NullAction::NullAction(int id, InputEvent* event): BaseAction(id, event) {
+NullAction::NullAction(int id, unique_ptr<InputEvent> &event): BaseAction(id, event) {
 #ifdef DEBUG
 	cout << "   # NullAction contructor (" << this << "), id:" << event->getId() << endl;
 #endif
@@ -30,7 +30,6 @@ NullAction::~NullAction() {
 #endif
 }
 
-// the caller is responsible for free the memory allocated to this cloned object.
 Action* NullAction::clone() const {
 	return new NullAction(*this);
 }

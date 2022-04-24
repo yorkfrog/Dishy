@@ -9,10 +9,12 @@
 #define BASEACTION_H_
 
 #include <iostream>
+#include <memory>
 using namespace std;
 
 #include "Action.h"
 #include "InputEvent.h"
+
 
 //#define INSTANCE_COUNT
 
@@ -23,7 +25,7 @@ public:
 
 public:
 	//Action();
-	BaseAction(int id, InputEvent* event) ;
+	BaseAction(int id, unique_ptr<InputEvent> &event) ;
 	BaseAction(const BaseAction &other) ;
 
 	virtual BaseAction& operator=(const BaseAction &other);
@@ -33,11 +35,11 @@ public:
 	virtual void setDescription(const string desc) ;
 	virtual string getDescription() const ;
 
-	InputEvent* getEvent() const;
+	shared_ptr<InputEvent> getEvent() const;
 	virtual int run() =0;
 
 private:
-	InputEvent* _pEvent;
+	shared_ptr<InputEvent> _pEvent;
 	string _description;
 	int _id;
 };

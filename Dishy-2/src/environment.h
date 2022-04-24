@@ -21,7 +21,7 @@
 #define ENVIRONMENT_H_
 
 // define this to allow debug logging in code.
-//#define DEBUG_OUT
+#define DEBUG_OUT
 
 #ifdef DEBUG_OUT
 #define LOG_DEBUG(...) cout << __VA_ARGS__

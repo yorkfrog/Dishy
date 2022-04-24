@@ -11,12 +11,13 @@
 #define ACTIONGROUP_H_
 
 #include <iostream>
+#include <memory>
 
 #include "Action.h"
 
 class ActionGroup: public virtual Action {
 private:
-	Action* _pTheAction;
+	shared_ptr<Action> _pTheAction;
 	int _maxActions;
 	string _description;
 	int _id;
@@ -26,7 +27,7 @@ public:
 
 public:
 	ActionGroup(int id, int maxActions, string desc);
-	ActionGroup(int id, int maxActions, Action* action, string desc);
+	ActionGroup(int id, int maxActions, unique_ptr<Action> &action, string desc);
 
 	ActionGroup(const ActionGroup &other);
 	ActionGroup& operator=(const ActionGroup &other) ;
@@ -41,7 +42,7 @@ public:
 	virtual string getDescription() const ;
 
 	int getMaxActions() const ;
-	void addAction(Action* action);
+	void addAction(unique_ptr<Action> &action);
 
 };
 

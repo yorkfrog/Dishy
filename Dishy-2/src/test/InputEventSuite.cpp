@@ -27,71 +27,62 @@ TEST(InputEventTest, classConstruction)
 
 }
 
+
 // valid char input
 TEST(InputEventTest, getInputEventFromValidInput)
 {
 
-	InputEvent* event = getEventForInput('1');
+	unique_ptr<InputEvent> event = getEventForInput('1');
 	EXPECT_EQ(InputEvent::btn1pressEvent, event->getId());
 	EXPECT_EQ('1', event->getData());
-	delete event;
 
-	event = getEventForInput('2');
-	EXPECT_EQ(InputEvent::btn2pressEvent, event->getId());
-	EXPECT_EQ('2', event->getData());
-	delete event;
+	unique_ptr<InputEvent> event2 = getEventForInput('2');
+	EXPECT_EQ(InputEvent::btn2pressEvent, event2->getId());
+	EXPECT_EQ('2', event2->getData());
 
-	event = getEventForInput('3');
-	EXPECT_EQ(InputEvent::btn3pressEvent, event->getId());
-	EXPECT_EQ('3', event->getData());
-	delete event;
+	unique_ptr<InputEvent> event3 = getEventForInput('3');
+	EXPECT_EQ(InputEvent::btn3pressEvent, event3->getId());
+	EXPECT_EQ('3', event3->getData());
 
-	event = getEventForInput('4');
-	EXPECT_EQ(InputEvent::btn4pressEvent, event->getId());
-	EXPECT_EQ('4', event->getData());
-	delete event;
+	unique_ptr<InputEvent> event4 = getEventForInput('4');
+	EXPECT_EQ(InputEvent::btn4pressEvent, event4->getId());
+	EXPECT_EQ('4', event4->getData());
 }
 
 // Invalid char input
 TEST(InputEventTest, getInputActionFromInvalidInput)
 {
 
-	InputEvent* event = getEventForInput('0');
+	unique_ptr<InputEvent> event = getEventForInput('0');
 	EXPECT_EQ(typeid(InputEvent), typeid(*event));
 	EXPECT_EQ(InputEvent::invalidEvent, event->getId());
 	EXPECT_EQ('0', event->getData());
-	delete event;
 
 	event = getEventForInput('a');
 	EXPECT_EQ(InputEvent::invalidEvent, event->getId());
 	EXPECT_EQ('a', event->getData());
-	delete event;
 
 	event = getEventForInput('z');
 	EXPECT_EQ(InputEvent::invalidEvent, event->getId());
 	EXPECT_EQ('z', event->getData());
-	delete event;
 
 	event = getEventForInput('5');
 	EXPECT_EQ(InputEvent::invalidEvent, event->getId());
 	EXPECT_EQ('5', event->getData());
-	delete event;
 
 	event = getEventForInput(' ');
 	EXPECT_EQ(InputEvent::invalidEvent, event->getId());
 	EXPECT_EQ(' ', event->getData());
-	delete event;
 
 	event = getEventForInput('\t');
 	EXPECT_EQ(InputEvent::invalidEvent, event->getId());
 	EXPECT_EQ('\t', event->getData());
-	delete event;
 
 	event = getEventForInput('\0');
 	EXPECT_EQ(InputEvent::invalidEvent, event->getId());
 	EXPECT_EQ('\0', event->getData());
-	delete event;
 }
+
 
 TEST(InputEventTest, noConstructionMemoryLeak)
 {

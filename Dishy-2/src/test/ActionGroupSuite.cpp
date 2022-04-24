@@ -1,3 +1,6 @@
+
+//#ifdef EXCLUDE
+
 #ifdef UNITTEST
 #include "gtest.h"
 #include "../InputEvent.h"
@@ -24,25 +27,29 @@ void expectStartEndInstaneCounts()
 
 // 1 event instance
 // 1 action instance
-NullAction makeNullAction(int actionId, int eventId, char data)
+unique_ptr<NullAction> makeNullAction(int actionId, int eventId, char data)
 {
-	InputEvent event1 = InputEvent(eventId, data);
-	return NullAction(actionId, &event1);
+	unique_ptr<InputEvent> event1 = make_unique<InputEvent>(eventId, data);
+	return make_unique<NullAction>(actionId, event1);
 }
 
 // 1 event instance
 // 1 action instance
 // 1 actionGrp instance
-ActionGroup makeActionGroup(int actionGroupid = defActionGrpId, int actionGrpMax = 1, string desc = defaultDescription, int actionId = defaultId, char actionData = defaultActionData)
+unique_ptr<ActionGroup> makeActionGroup(int actionGroupid = defActionGrpId, int actionGrpMax = 1, string desc = defaultDescription, int actionId = defaultId, char actionData = defaultActionData)
 {
-	NullAction action1 = makeNullAction(defActionId, actionId, actionData);
-	action1.setDescription((string("Action[") + to_string(actionId) + (string("]:")) + desc));
-	return ActionGroup(actionGroupid, actionGrpMax, &action1, desc);
+	unique_ptr<Action> action1 = makeNullAction(defActionId, actionId, actionData);
+	action1->setDescription((string("Action[") + to_string(actionId) + (string("]:")) + desc));
+	return make_unique<ActionGroup>(actionGroupid, actionGrpMax, action1, desc);
+}
+shared_ptr<ActionGroup> makeSharedActionGroup(int actionGroupid = defActionGrpId, int actionGrpMax = 1, string desc = defaultDescription, int actionId = defaultId, char actionData = defaultActionData) {
+	unique_ptr<ActionGroup> tmp = makeActionGroup(actionGroupid , actionGrpMax , desc , actionId , actionData);
+	return make_shared<ActionGroup>(*(tmp.get()) ) ;
 }
 
-void expectAfterActionGroupConstruction(ActionGroup *actionGrp, string description, int actionGrpInstanceCount)
+void expectAfterActionGroupConstruction(unique_ptr<ActionGroup> &actionGrp, string description, int actionGrpInstanceCount)
 {
-	EXPECT_NE(actionGrp, NULL);
+	EXPECT_NE(actionGrp.get(), NULL);
 	EXPECT_EQ(typeid(ActionGroup), typeid(*actionGrp));
 	EXPECT_EQ(description, actionGrp->getDescription());
 	EXPECT_EQ(defActionGrpId, actionGrp->getId());
@@ -56,9 +63,9 @@ TEST(ActionGroupTest, classConstructionFromActionObject)
 
 	expectStartEndInstaneCounts();
 	{
-		NullAction action1 = makeNullAction(defActionId, defaultId, defaultActionData);
-		ActionGroup actionGrp1 = ActionGroup(defActionGrpId, 1, &action1, defaultDescription);
-		expectAfterActionGroupConstruction(&actionGrp1, defaultDescription, 1);
+		unique_ptr<Action> action1 = makeNullAction(defActionId, defaultId, defaultActionData);
+		unique_ptr<ActionGroup> actionGrp1 = make_unique<ActionGroup>(defActionGrpId, 1, action1, defaultDescription);
+		expectAfterActionGroupConstruction(actionGrp1, defaultDescription, 1);
 	}
 	expectStartEndInstaneCounts();
 }
@@ -68,11 +75,14 @@ TEST(ActionGroupTest, classConstructionFromActionNewPointer)
 
 	expectStartEndInstaneCounts();
 	{
-		InputEvent event1 = InputEvent(defaultId, defaultActionData);
-		NullAction *pAction1 = new NullAction(10, &event1);
-		ActionGroup actionGrp1 = ActionGroup(defActionGrpId, 1, pAction1, defaultDescription);
-		expectAfterActionGroupConstruction(&actionGrp1, defaultDescription, 1);
-		delete pAction1;
+		unique_ptr<InputEvent> event1 = make_unique<InputEvent>(defaultId, defaultActionData);
+		unique_ptr<Action> pAction1 =  make_unique<NullAction>(10, event1);
+
+
+//		InputEvent event1 = InputEvent(defaultId, defaultActionData);
+//		NullAction *pAction1 = new NullAction(10, &event1);
+		unique_ptr<ActionGroup> actionGrp1 = make_unique<ActionGroup>(defActionGrpId, 1, pAction1, defaultDescription);
+		expectAfterActionGroupConstruction(actionGrp1, defaultDescription, 1);
 	}
 	expectStartEndInstaneCounts();
 }
@@ -82,15 +92,14 @@ TEST(ActionGroupTest, classCopyConstruction)
 	// copy constructor
 	expectStartEndInstaneCounts();
 	{
-		NullAction action1 = makeNullAction(defActionId, defaultId, defaultActionData);
-		ActionGroup actionGrp1 = makeActionGroup();
-
-		ActionGroup actionGrp2 = ActionGroup(actionGrp1);
-		expectAfterActionGroupConstruction(&actionGrp2, defaultDescription, 2);
-		ASSERT_NE(&actionGrp1, &actionGrp2);
-		ASSERT_NE(&(actionGrp1.getDescription()), &(actionGrp2.getDescription()));
-		ASSERT_EQ(actionGrp1.getDescription(), actionGrp2.getDescription());
-		ASSERT_EQ(actionGrp1.getMaxActions(), actionGrp2.getMaxActions());
+		unique_ptr<NullAction> action1 = makeNullAction(defActionId, defaultId, defaultActionData);
+		unique_ptr<ActionGroup> actionGrp1 = makeActionGroup();
+		unique_ptr<ActionGroup> actionGrp2 = make_unique<ActionGroup>( *(actionGrp1.get()) );
+		expectAfterActionGroupConstruction(actionGrp2, defaultDescription, 2);
+		ASSERT_NE(actionGrp1, actionGrp2);
+		ASSERT_NE(&(actionGrp1->getDescription()), &(actionGrp2->getDescription()));
+		ASSERT_EQ(actionGrp1->getDescription(), actionGrp2->getDescription());
+		ASSERT_EQ(actionGrp1->getMaxActions(), actionGrp2->getMaxActions());
 	}
 	expectStartEndInstaneCounts();
 }
@@ -99,27 +108,29 @@ TEST(ActionGroupTest, classOperatorEquals)
 {
 	expectStartEndInstaneCounts();
 	{
-		ActionGroup actionGrp1 = makeActionGroup(100, 10, "Group1");
-		ActionGroup actionGrp2 = makeActionGroup(200, 20, "My Group 2");
 
-		EXPECT_NE(actionGrp1.getId(), actionGrp2.getId());
-		EXPECT_NE(actionGrp1.getMaxActions(), actionGrp2.getMaxActions());
-		EXPECT_NE(actionGrp1.getDescription(), actionGrp2.getDescription());
-		EXPECT_NE(actionGrp1.run(), actionGrp2.run());
+		shared_ptr<ActionGroup> actionGrp1 = makeSharedActionGroup(100, 10, "Group1");
+		shared_ptr<ActionGroup> actionGrp2 = makeSharedActionGroup(200, 20, "My Group 2");
+
+		EXPECT_NE(actionGrp1.get(), actionGrp2.get());
+		EXPECT_NE(actionGrp1->getId(), actionGrp2->getId());
+		EXPECT_NE(actionGrp1->getMaxActions(), actionGrp2->getMaxActions());
+		EXPECT_NE(actionGrp1->getDescription(), actionGrp2->getDescription());
+		EXPECT_NE(actionGrp1->run(), actionGrp2->run());
 		EXPECT_EQ(2, ActionGroup::instanceCount);
 		EXPECT_EQ(2, NullAction::instanceCount);
 		EXPECT_EQ(2, InputEvent::instanceCount);
 
 		actionGrp1 = actionGrp2;
 
-		EXPECT_NE(&actionGrp1, &actionGrp2);
-		EXPECT_EQ(actionGrp1.getId(), actionGrp2.getId());
-		EXPECT_EQ(actionGrp1.getMaxActions(), actionGrp2.getMaxActions());
-		EXPECT_EQ(actionGrp1.getDescription(), actionGrp2.getDescription());
-		EXPECT_EQ(actionGrp1.run(), actionGrp2.run());
-		EXPECT_EQ(2, ActionGroup::instanceCount);
-		EXPECT_EQ(2, NullAction::instanceCount);
-		EXPECT_EQ(2, InputEvent::instanceCount);
+		EXPECT_EQ(actionGrp1.get(), actionGrp2.get());
+		EXPECT_EQ(actionGrp1->getId(), actionGrp2->getId());
+		EXPECT_EQ(actionGrp1->getMaxActions(), actionGrp2->getMaxActions());
+		EXPECT_EQ(actionGrp1->getDescription(), actionGrp2->getDescription());
+		EXPECT_EQ(actionGrp1->run(), actionGrp2->run());
+		EXPECT_EQ(1, ActionGroup::instanceCount);
+		EXPECT_EQ(1, NullAction::instanceCount);
+		EXPECT_EQ(1, InputEvent::instanceCount);
 	}
 	expectStartEndInstaneCounts();
 }
@@ -131,31 +142,31 @@ TEST(ActionGroupTest, classOperatorEquals)
  TEST(ActionGroupTest, invalidEventOnActionConstruction)
  {
  // null action
- ActionGroup actionGrp1 = ActionGroup(1, NULL, defaultDescription);
+ unique_ptr<ActionGroup> actionGrp1 = ActionGroup(1, NULL, defaultDescription);
 
  // null action pointer
  ActionGroup* pActionGrp = NULL;
- ActionGroup actionGrp2 = ActionGroup(1, pActionGrp, defaultDescription);
+ unique_ptr<ActionGroup> actionGrp2 = ActionGroup(1, pActionGrp, defaultDescription);
  }
  */
 
 // Test class run
 TEST(ActionGroupTest, actionRun)
 {
-	ActionGroup actionGrp1 = makeActionGroup();
+	unique_ptr<ActionGroup> actionGrp1 = makeActionGroup();
 
-	EXPECT_EQ(28, actionGrp1.run());
+	EXPECT_EQ(28, actionGrp1->run());
 }
 
 TEST(ActionGroupTest, setGetActionDescription)
 {
-	ActionGroup actionGrp1 = makeActionGroup();
+	unique_ptr<ActionGroup> actionGrp1 = makeActionGroup();
 	string desc = "TestDesc";
-	actionGrp1.setDescription(desc);
-	EXPECT_EQ(desc, actionGrp1.getDescription());
+	actionGrp1->setDescription(desc);
+	EXPECT_EQ(desc, actionGrp1->getDescription());
 
-	actionGrp1.setDescription("String Literal");
-	EXPECT_EQ("String Literal", actionGrp1.getDescription());
+	actionGrp1->setDescription("String Literal");
+	EXPECT_EQ("String Literal", actionGrp1->getDescription());
 }
 
 TEST(ActionGroupTest, noActionConstructionMemoryLeak)
@@ -166,21 +177,21 @@ TEST(ActionGroupTest, noActionConstructionMemoryLeak)
 		// 1 event instance
 		// 1 action instance
 		// 1 actionGrp instance
-		ActionGroup actionGrp1 = makeActionGroup();
+		shared_ptr<ActionGroup> pActionGrp1 = makeSharedActionGroup();
 
 		// 1 event instance
 		// 1 action instance
-		NullAction nAction = makeNullAction(defActionId, defaultId, defaultActionData);
+//		unique_ptr<NullAction> nAction = makeNullAction(defActionId, defaultId, defaultActionData);
 
 		// 1 event instance
 		// 1 action instance
 		// 1 actionGrp instance
-		ActionGroup *pActionGrp2 = new ActionGroup(defActionGrpId, 1, &nAction, defaultDescription);
-		ActionGroup *pActionGrp3 = &actionGrp1;
+		shared_ptr<ActionGroup> pActionGrp2 = makeSharedActionGroup(defActionGrpId, 1, defaultDescription, defActionId, defaultActionData);
+	//	ActionGroup *pActionGrp2 = new ActionGroup(defActionGrpId, 1, &nAction, defaultDescription);
+		ActionGroup pActionGrp3 = *(pActionGrp1.get());
 		EXPECT_EQ(3, InputEvent::instanceCount);
 		EXPECT_EQ(3, NullAction::instanceCount);
-		EXPECT_EQ(2, ActionGroup::instanceCount);
-		delete pActionGrp2;
+		EXPECT_EQ(3, ActionGroup::instanceCount);
 	}
 	expectStartEndInstaneCounts();
 }
@@ -190,19 +201,17 @@ TEST(ActionGroupTest, clone)
 	expectStartEndInstaneCounts();
 	{
 		string groupDesc = "Cloned Group Description";
-		ActionGroup actionGrp1 = makeActionGroup(20, 2, groupDesc);
+		unique_ptr<ActionGroup> actionGrp1 = makeActionGroup(20, 2, groupDesc);
 
-		Action *pActionGrpClone = actionGrp1.clone();
+		unique_ptr<Action> pActionGrpClone = unique_ptr<Action>(actionGrp1->clone());
 
-		EXPECT_NE(pActionGrpClone, &actionGrp1);
-		EXPECT_EQ(pActionGrpClone->getDescription(), actionGrp1.getDescription());
-		EXPECT_EQ(pActionGrpClone->run(), actionGrp1.run());
-		EXPECT_EQ(pActionGrpClone->run(), actionGrp1.run());
+		EXPECT_NE(pActionGrpClone, actionGrp1);
+		EXPECT_EQ(pActionGrpClone->getDescription(), actionGrp1->getDescription());
+		EXPECT_EQ(pActionGrpClone->run(), actionGrp1->run());
+		EXPECT_EQ(pActionGrpClone->run(), actionGrp1->run());
 		EXPECT_EQ(2, ActionGroup::instanceCount);
 		EXPECT_EQ(2, NullAction::instanceCount);
 		EXPECT_EQ(2, InputEvent::instanceCount);
-
-		delete pActionGrpClone;
 	}
 	expectStartEndInstaneCounts();
 }
@@ -210,3 +219,4 @@ TEST(ActionGroupTest, clone)
 } // end namesapce
 
 #endif
+

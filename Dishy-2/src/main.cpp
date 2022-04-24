@@ -18,8 +18,8 @@ using namespace std;
 
 void doExit();
 void assertNoMemoryLeak();
-void dispatchEvent(InputEvent *pInputEvent);
-bool isValidInput(InputEvent *pInputEvent);
+void dispatchEvent(unique_ptr<InputEvent> &pInputEvent);
+bool isValidInput(unique_ptr<InputEvent> &pInputEvent);
 
 void setup()
 {
@@ -28,13 +28,14 @@ void setup()
 }
 
 
-============================
+//============================
 
 		/*
-		 * 1 - add actions to array in ActionGroup
-		 * 2 - learn about smart pointers
-		 * 3 - convert to smart pointers
-		 * Go to NFT's
+		 * TODO 1 - add actions to array in ActionGroup
+		 * TODO 2 - learn about smart pointers
+		 * TODO 3 - convert to smart pointers
+		 * TODO 4 - add local Git repo's to remote.
+		 * TODO Go to NFT's
 		 */
 
 
@@ -45,25 +46,25 @@ void loop()
 		char input = '\0';
 		input = readInput();
 
-		InputEvent* pInputEvent = getEventForInput(input);
+		unique_ptr<InputEvent> pInputEvent = getEventForInput(input);
 
 		if (isValidInput(pInputEvent))
 		{
 			dispatchEvent(pInputEvent);
 		}
-		delete pInputEvent;
+		//pInputEvent.reset();
 	}
 
 	assertNoMemoryLeak();
 
 }
 
-bool isValidInput(InputEvent *pInputEvent)
+bool isValidInput(unique_ptr<InputEvent> &pInputEvent)
 {
 	bool result = true;
 	if (pInputEvent->getId() == InputEvent::invalidEvent && pInputEvent->getData() == 'x')
 	{
-		delete pInputEvent;
+		//pInputEvent.reset();
 		doExit();
 	}
 	else if (pInputEvent->getId() == InputEvent::invalidEvent)
@@ -74,11 +75,11 @@ bool isValidInput(InputEvent *pInputEvent)
 	return result;
 }
 
-void dispatchEvent(InputEvent *pInputEvent)
+void dispatchEvent(unique_ptr<InputEvent> &pInputEvent)
 {
 	Action *pAction = NULL;
 
-	pAction = getAction(*pInputEvent);
+	pAction = getAction(pInputEvent);
 
 	cout << "------------------" << endl;
 	int actionResult = pAction->run();
@@ -88,10 +89,10 @@ void dispatchEvent(InputEvent *pInputEvent)
 }
 
 // caller must free Action memory.
-Action* getAction(InputEvent &event)
+Action* getAction(unique_ptr<InputEvent> &event)
 {
 
-	Action *singleAction = NULL;
+	unique_ptr<Action> singleAction = NULL;
 	ActionGroup *newActionGrp = NULL;
 	string group1Desc = "Group1";
 	string group2Desc = "Group2";
@@ -99,35 +100,38 @@ Action* getAction(InputEvent &event)
 	string testDesc = "TEST_STR";
 	int result = 0;
 
-	switch (event.getId()) {
+	switch (event->getId()) {
 	case InputEvent::btn1pressEvent:
-		singleAction = new DisplayAction(-1, 1, &event);
+//		singleAction = new NullAction(1,event);
+		singleAction = unique_ptr<Action>(new DisplayAction(-1, 1, event));
 		newActionGrp = new ActionGroup(100, 10, singleAction, "Group1");
 		break;
 	case InputEvent::btn2pressEvent:
-		singleAction = new DisplayAction(-2, 2, &event);
+//		singleAction = new NullAction(2,event);
+		singleAction = unique_ptr<Action>(new DisplayAction(-2, 2, event));
 		newActionGrp = new ActionGroup(200, 20, singleAction, group2Desc);
 		break;
 	case InputEvent::btn3pressEvent:
-		singleAction = new DisplayAction(-3, 3, &event);
+//		singleAction = new NullAction(3,event);
+		singleAction = unique_ptr<Action>(new DisplayAction(-3, 3, event));
 		newActionGrp = new ActionGroup(300, 30, singleAction, group2Desc);
 		break;
 	case InputEvent::btn4pressEvent:
-		singleAction = new NullAction(1,&event);
+		singleAction = unique_ptr<Action>(new NullAction(1,event));
 		newActionGrp = new ActionGroup(400, 40, singleAction, group2Desc);
 		break;
 	default:
-		singleAction = new NullAction(2,&event);
+		singleAction = unique_ptr<Action>(new NullAction(2,event));
 		newActionGrp = new ActionGroup(-10, -1, singleAction, group2Desc);
 		cout << "NEW ACTION:" << newActionGrp->toString();
 		break;
 	}
-	delete singleAction;
+	singleAction.reset();
 	return newActionGrp;
 }
 
 // caller must free InputEvent memory.
-InputEvent* getEventForInput(char input)
+unique_ptr<InputEvent> getEventForInput(char input)
 {
 	int eventType = InputEvent::invalidEvent;
 	switch (input) {
@@ -146,7 +150,7 @@ InputEvent* getEventForInput(char input)
 	default:
 		break;
 	}
-	return new InputEvent(eventType, input);
+	return make_unique<InputEvent>(eventType, input);
 }
 
 void assertNoMemoryLeak()

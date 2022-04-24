@@ -1,12 +1,10 @@
 /*
- * ButtonPressAction.h
- *
  *  Created on: 19 Apr 2022
  *      Author: colin
  */
 
-#ifndef DISPLAYBASEACTION_H_
-#define DISPLAYBASEACTION_H_
+#ifndef DISPLAYACTION_H_
+#define DISPLAYACTION_H_
 
 #include "BaseAction.h"
 #include "InputEvent.h"
@@ -17,7 +15,7 @@ private:
 	int _buttonNumber;
 
 public:
-	DisplayAction(int id, int buttonNum, InputEvent *event);
+	DisplayAction(int id, int buttonNum, unique_ptr<InputEvent> &event);
 	DisplayAction::DisplayAction(const DisplayAction &other);
 
 	virtual ~DisplayAction();
@@ -29,4 +27,4 @@ public:
 	int getButtonNumber() const;
 };
 
-#endif /* DISPLAYBASEACTION_H_ */
+#endif /* DISPLAYACTION_H_ */

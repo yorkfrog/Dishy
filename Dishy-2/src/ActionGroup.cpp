@@ -33,14 +33,15 @@ ActionGroup::ActionGroup(int id, int maxActions, string desc)
 }
 
 // this object will delete the action object on destruction
-ActionGroup::ActionGroup(int id, int maxActions, Action *action, string desc)
+ActionGroup::ActionGroup(int id, int maxActions, unique_ptr<Action> &action, string desc)
 {
 	instanceCount++;
 	assert(maxActions > 0);
 	assert(action != NULL);
 
 	_id = id;
-	_pTheAction = action->clone();
+
+	_pTheAction = shared_ptr<Action>((action.get())->clone());
 	_maxActions = maxActions;
 	_description = desc;
 #ifdef DEBUG
@@ -54,7 +55,7 @@ ActionGroup::ActionGroup(const ActionGroup &other)
 	instanceCount++;
 
 	_id = other._id;
-	_pTheAction = other._pTheAction->clone();
+	_pTheAction = shared_ptr<Action>((other._pTheAction.get())->clone());
 	_maxActions = other._maxActions;
 	_description = other._description;
 #ifdef DEBUG
@@ -67,10 +68,10 @@ ActionGroup& ActionGroup::operator=(const ActionGroup &other) {
 	cout << "# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl;
 	if (this != &other) { // protect against invalid self-assignment
 		// 1: allocate new memory and copy the elements
-		Action *pNewAction = other._pTheAction->clone();
+		shared_ptr<Action> pNewAction = shared_ptr<Action>((other._pTheAction.get())->clone());
 
 		// 2: deallocate old memory
-		delete _pTheAction;
+		_pTheAction.reset();
 
 		// 3: assign the new memory to the object
 		_pTheAction = pNewAction;
@@ -86,8 +87,7 @@ ActionGroup& ActionGroup::operator=(const ActionGroup &other) {
 
 ActionGroup::~ActionGroup()
 {
-	delete _pTheAction;
-	_pTheAction = NULL;
+	_pTheAction.reset();
 #ifdef DEBUG
 	cout << "   # ActionGroup destructor on (" << this << ")" << endl;
 #endif
@@ -111,10 +111,9 @@ int ActionGroup::getId() const
 }
 
 // this object will delete the action object on destruction
-void ActionGroup::addAction(Action *action)
+void ActionGroup::addAction(unique_ptr<Action> &action)
 {
-	assert(action != NULL);
-	_pTheAction = action;
+	_pTheAction = shared_ptr<Action>((action.get())->clone());
 
 	// TODO add actions to collection (array) of Action Ptrs AND FREE
 
