@@ -6,18 +6,21 @@
  */
 //#define DEBUG
 
-#include <iostream>
-#include <sstream>
+//#include <iostream>
+//#include <sstream>
 
 // define NDEBUG to turn off assert()
 //#define NDEBUG
+
+#include "environment.h"
 #include <assert.h>
 
 #include "BaseAction.h"
 
-#include "environment.h"
 
 #include "InputEvent.h"
+
+#include <sstream>
 using namespace std;
 
 
@@ -52,9 +55,8 @@ BaseAction::BaseAction(const BaseAction& other) {
 
 
 BaseAction& BaseAction::operator=(const BaseAction &other) {
-	cout << "# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl;
+	LOG_DEBUG("# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl);
 	if (this != &other) { // protect against invalid self-assignment
-		cout << "#### 2" << endl;
 		// 1: allocate new memory and copy the elements
 		shared_ptr<InputEvent> pNewEvent = make_shared<InputEvent>(*(other._pEvent.get()) ) ;
 

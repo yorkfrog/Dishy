@@ -11,12 +11,17 @@
 
 class DisplayAction: public virtual Action, public BaseAction
 {
+
 private:
 	int _buttonNumber;
 
 public:
+	static int doTest() {return 2;};
+
+
+public:
 	DisplayAction(int id, int buttonNum, unique_ptr<InputEvent> &event);
-	DisplayAction::DisplayAction(const DisplayAction &other);
+	DisplayAction(const DisplayAction &other);
 
 	virtual ~DisplayAction();
 	virtual Action* clone() const;

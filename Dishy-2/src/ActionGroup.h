@@ -10,7 +10,11 @@
 #ifndef ACTIONGROUP_H_
 #define ACTIONGROUP_H_
 
+#include "environment.h"
+
+#ifndef MCU_ENV
 #include <iostream>
+#endif
 #include <memory>
 
 #include "Action.h"

@@ -10,7 +10,12 @@
 //#define NDEBUG
 #include <assert.h>
 
+
+#include "environment.h"
+
+#ifndef MCU_ENV
 #include <iostream>
+#endif
 using namespace std;
 #include <sstream>
 
@@ -65,7 +70,7 @@ ActionGroup::ActionGroup(const ActionGroup &other)
 
 ActionGroup& ActionGroup::operator=(const ActionGroup &other) {
 
-	cout << "# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl;
+	LOG_DEBUG("# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl);
 	if (this != &other) { // protect against invalid self-assignment
 		// 1: allocate new memory and copy the elements
 		shared_ptr<Action> pNewAction = shared_ptr<Action>((other._pTheAction.get())->clone());
@@ -128,7 +133,7 @@ string ActionGroup::toString() const
 
 int ActionGroup::run()
 {
-	cout << "run " << toString() << " " << _pTheAction << endl;
+	LOG_DEBUG("run " << toString() << " " << _pTheAction << endl);
 	return _pTheAction->run();
 }
 

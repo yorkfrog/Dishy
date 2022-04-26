@@ -8,7 +8,7 @@
 #ifndef ACTION_H_
 #define ACTION_H_
 
-#include <iostream>
+#include <string>
 using namespace std;
 
 class Action {

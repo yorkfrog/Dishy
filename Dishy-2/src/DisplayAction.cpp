@@ -3,7 +3,13 @@
  *      Author: colin
  */
 //#define DEBUG
+
+#include "environment.h"
+
+#ifndef MCU_ENV
 #include <iostream>
+#endif
+
 #include <sstream>
 using namespace std;
 
@@ -44,7 +50,10 @@ Action* DisplayAction::clone() const
 
 int DisplayAction::run()
 {
+#ifndef MCU_ENV
 	cout << "run DisplayAction::" << this->toString() << endl;
+#endif
+
 	return 0;
 }
 

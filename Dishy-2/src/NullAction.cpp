@@ -6,35 +6,54 @@
  */
 //#define DEBUG
 
+#include "environment.h"
+
+#ifndef MCU_ENV
 #include <iostream>
+#endif
+
 using namespace std;
 
 #include "NullAction.h"
 
-NullAction::NullAction(int id, unique_ptr<InputEvent> &event): BaseAction(id, event) {
+/*
+static unique_ptr<NullAction> NullAction::build()
+{
+	unique_ptr<InputEvent> event = make_unique<InputEvent>(100, 'z');
+	unique_ptr<NullAction> action = make_unique<NullAction>(1000, event);
+	return action;
+}
+*/
+
+NullAction::NullAction(int id, unique_ptr<InputEvent> &event): BaseAction(id, event)
+{
 #ifdef DEBUG
 	cout << "   # NullAction contructor (" << this << "), id:" << event->getId() << endl;
 #endif
 }
 
-NullAction::NullAction(const NullAction &other): BaseAction(other)  {
+NullAction::NullAction(const NullAction &other) : BaseAction(other)
+{
 #ifdef DEBUG
 	cout << "   # NullAction  COPY contructor, from (" << &other << "), to (" << this << ")" << endl;
 #endif
 
 }
 
-NullAction::~NullAction() {
+NullAction::~NullAction()
+{
 #ifdef DEBUG
 	cout << "   # NullAction destructor on (" << this << ")" << endl;
 #endif
 }
 
-Action* NullAction::clone() const {
+Action* NullAction::clone() const
+{
 	return new NullAction(*this);
 }
 
-int NullAction::run() {
-	cout << "run NullAction" << "::" << this->toString() << endl;
+int NullAction::run()
+{
+	printf("run NullAction::%s\n", this->toString());
 	return getDescription().length();
 }

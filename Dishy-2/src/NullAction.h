@@ -13,9 +13,14 @@
 
 class NullAction: public virtual Action, public BaseAction
 {
+/*
+public:
+	static unique_ptr<NullAction> build();
+*/
+
 public:
 	NullAction(int id, unique_ptr<InputEvent> &event);
-	NullAction::NullAction(const NullAction &other);
+	NullAction(const NullAction &other);
 
 	virtual ~NullAction();
 	virtual Action* clone() const;

@@ -134,7 +134,9 @@ TEST_F(NullActionTest, actionRun)
 
 	EXPECT_EQ(0, action.run());
 
-}
+}//		unique_ptr<InputEvent> event1 = make_unique<InputEvent>(1, 'a');
+//		unique_ptr<InputEvent> pEvent2 = make_unique<InputEvent>(2, 'b');
+
 
 TEST_F(NullActionTest, setGetActionDescription)
 {
@@ -162,6 +164,32 @@ TEST_F(NullActionTest, noActionConstructionMemoryLeak)
 		Action *action = &action2;
 		EXPECT_EQ(5, InputEvent::instanceCount);
 		EXPECT_EQ(2, NullAction::instanceCount);
+//		delete pEvent2;
+	}
+	EXPECT_EQ(1, InputEvent::instanceCount);
+	EXPECT_EQ(0, NullAction::instanceCount);
+}
+
+TEST_F(NullActionTest, testStatic)
+{
+	// the Test Fixture creates an InputEvent instance which we won;t use.
+	EXPECT_EQ(1, InputEvent::instanceCount) << "Check 0 InputEvent instance on entry.";
+	EXPECT_EQ(0, NullAction::instanceCount) << "Check 0 NullAction instance on entry.";
+	{
+//		unique_ptr<InputEvent> event1 = make_unique<InputEvent>(1, 'a');
+//		unique_ptr<InputEvent> pEvent2 = make_unique<InputEvent>(2, 'b');
+
+		unique_ptr<NullAction> actionBuild = NullAction::build();
+
+		EXPECT_EQ(1000, actionBuild->getId());
+		EXPECT_EQ("", actionBuild->getDescription());
+		EXPECT_EQ(0, actionBuild->run());
+		EXPECT_EQ(100, actionBuild->getEvent()->getId());
+		EXPECT_EQ('z', actionBuild->getEvent()->getData());
+
+
+		EXPECT_EQ(2, InputEvent::instanceCount);
+		EXPECT_EQ(1, NullAction::instanceCount);
 //		delete pEvent2;
 	}
 	EXPECT_EQ(1, InputEvent::instanceCount);

@@ -4,46 +4,60 @@
  *  Created on: Nov 27, 2015
  *      Author: jan
  */
+#include "environment.h"
+
+#ifndef MCU_ENV
 #include <iostream>
 using namespace std;
+#endif
+
+#ifdef MCU_ENV
+//#include ""
+#endif
+
 #include "main.h"
-#include "stdio.h"
+//#include "stdio.h"
+
+#include "ToggleLedAction.h"
 
 // enable NDEBUG to disable assert()
 #define NDEBUG
 #include <assert.h>     /* assert */
 
-#include "Arduino.h"
-
+//#include "Arduino.h"
 
 void doExit();
 void assertNoMemoryLeak();
 void dispatchEvent(unique_ptr<InputEvent> &pInputEvent);
 bool isValidInput(unique_ptr<InputEvent> &pInputEvent);
 
+
 void setup()
 {
-
+#ifdef MCU_ENV
+	// open the serial port:
+	Serial.begin(9600);
 	pinMode(LED_BUILTIN, OUTPUT);
+	Serial.println("Welcome!");
+#endif
 }
-
 
 //============================
 
-		/*
-		 * TODO 1 - add actions to array in ActionGroup
-		 * TODO 2 - learn about smart pointers
-		 * TODO 3 - convert to smart pointers
-		 * TODO 4 - add local Git repo's to remote.
-		 * TODO Go to NFT's
-		 */
-
+/*
+ * TODO 1 - add actions to array in ActionGroup
+ * TODO 2 - learn about smart pointers
+ * TODO 3 - convert to smart pointers
+ * TODO 4 - add local Git repo's to remote.
+ * TODO Go to NFT's
+ */
 
 void loop()
 {
 
 	{ // memory tracking block
 		char input = '\0';
+
 		input = readInput();
 
 		unique_ptr<InputEvent> pInputEvent = getEventForInput(input);
@@ -52,7 +66,6 @@ void loop()
 		{
 			dispatchEvent(pInputEvent);
 		}
-		//pInputEvent.reset();
 	}
 
 	assertNoMemoryLeak();
@@ -69,7 +82,7 @@ bool isValidInput(unique_ptr<InputEvent> &pInputEvent)
 	}
 	else if (pInputEvent->getId() == InputEvent::invalidEvent)
 	{
-		cout << "Invalid input " << pInputEvent->getData() << endl;
+		LOG_DEBUG("Invalid input " << pInputEvent->getData() << endl);
 		result = false;
 	}
 	return result;
@@ -81,11 +94,11 @@ void dispatchEvent(unique_ptr<InputEvent> &pInputEvent)
 
 	pAction = getAction(pInputEvent);
 
-	cout << "------------------" << endl;
+	LOG_DEBUG("------------------" << endl);
 	int actionResult = pAction->run();
 	delete pAction;
-	cout << "Action result:" << actionResult << endl;
-	cout << "------------------" << endl;
+	LOG_DEBUG( "Action result:" << actionResult << endl);
+	LOG_DEBUG("------------------" << endl);
 }
 
 // caller must free Action memory.
@@ -102,8 +115,7 @@ Action* getAction(unique_ptr<InputEvent> &event)
 
 	switch (event->getId()) {
 	case InputEvent::btn1pressEvent:
-//		singleAction = new NullAction(1,event);
-		singleAction = unique_ptr<Action>(new DisplayAction(-1, 1, event));
+		singleAction = unique_ptr<Action>(new ToggleLedAction(1, event));
 		newActionGrp = new ActionGroup(100, 10, singleAction, "Group1");
 		break;
 	case InputEvent::btn2pressEvent:
@@ -117,13 +129,13 @@ Action* getAction(unique_ptr<InputEvent> &event)
 		newActionGrp = new ActionGroup(300, 30, singleAction, group2Desc);
 		break;
 	case InputEvent::btn4pressEvent:
-		singleAction = unique_ptr<Action>(new NullAction(1,event));
+		singleAction = unique_ptr<Action>(new NullAction(1, event));
 		newActionGrp = new ActionGroup(400, 40, singleAction, group2Desc);
 		break;
 	default:
-		singleAction = unique_ptr<Action>(new NullAction(2,event));
+		singleAction = unique_ptr<Action>(new NullAction(2, event));
 		newActionGrp = new ActionGroup(-10, -1, singleAction, group2Desc);
-		cout << "NEW ACTION:" << newActionGrp->toString();
+		LOG_DEBUG("NEW ACTION:" << newActionGrp->toString());
 		break;
 	}
 	singleAction.reset();
@@ -157,23 +169,23 @@ void assertNoMemoryLeak()
 {
 	if (ActionGroup::instanceCount > 0)
 	{
-		cout << "**** MEMORY LEAK - ActionGroup instance count != 0, Actual:[" << ActionGroup::instanceCount << "]" << endl;
+		LOG_DEBUG( "**** MEMORY LEAK - ActionGroup instance count != 0, Actual:[" << ActionGroup::instanceCount << "]" << endl);
 	}
 	if (BaseAction::instanceCount > 0)
 	{
-		cout << "**** MEMORY LEAK - BaseAction instance count != 0, Actual:[" << BaseAction::instanceCount << "]" << endl;
+		LOG_DEBUG( "**** MEMORY LEAK - BaseAction instance count != 0, Actual:[" << BaseAction::instanceCount << "]" << endl);
 	}
 
 	if (InputEvent::instanceCount > 0)
 	{
-		cout << "**** MEMORY LEAK - InputEvent instance count != 0, Actual:[" << InputEvent::instanceCount << "]" << endl;
+		LOG_DEBUG("**** MEMORY LEAK - InputEvent instance count != 0, Actual:[" << InputEvent::instanceCount << "]" << endl);
 	}
 	assert(BaseAction::instanceCount == 0);
 }
 
 void doExit()
 {
-	cout << "all done!" << endl;
+	LOG_DEBUG("all done!" << endl);
 	assertNoMemoryLeak();
 	exit(0);
 }
