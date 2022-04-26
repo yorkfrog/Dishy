@@ -6,10 +6,6 @@
 
 #include "environment.h"
 
-#ifndef MCU_ENV
-#include <iostream>
-#endif
-
 #include <sstream>
 using namespace std;
 
@@ -19,8 +15,7 @@ DisplayAction::DisplayAction(int id, int buttonNum, unique_ptr<InputEvent> &even
 
 {
 #ifdef DEBUG
-	cout << "   # DisplayAction contructor (" << this << "), id:"
-			<< event->getId() << endl;
+	LOG_DEBUG_LN("      # DisplayAction constructor [%#lx] id:%i\n", this , event->getId() );
 #endif
 	_buttonNumber = buttonNum;
 }
@@ -28,8 +23,7 @@ DisplayAction::DisplayAction(int id, int buttonNum, unique_ptr<InputEvent> &even
 DisplayAction::DisplayAction(const DisplayAction &other) : BaseAction(other)
 {
 #ifdef DEBUG
-	cout << "   # DisplayAction  COPY contructor, from (" << &other
-			<< "), to (" << this << ")" << endl;
+	LOG_DEBUG_LN("      # DisplayAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this  );
 #endif
 	_buttonNumber = other._buttonNumber;
 
@@ -38,7 +32,7 @@ DisplayAction::DisplayAction(const DisplayAction &other) : BaseAction(other)
 DisplayAction::~DisplayAction()
 {
 #ifdef DEBUG
-	cout << "   # DisplayAction destructor on (" << this << ")" << endl;
+	LOG_DEBUG_LN("      # DisplayAction destructor on [%#lx]\n" , this);
 #endif
 }
 
@@ -51,7 +45,7 @@ Action* DisplayAction::clone() const
 int DisplayAction::run()
 {
 #ifndef MCU_ENV
-	cout << "run DisplayAction::" << this->toString() << endl;
+	LOG_DEBUG_LN("run DisplayAction::%s\n" , this->toString());
 #endif
 
 	return 0;

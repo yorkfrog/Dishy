@@ -20,7 +20,7 @@
 #include "DisplayAction.h"
 #include "NullAction.h"
 #include "InputEvent.h"
-#include "KeyboardInput.h"
+#include "KeyboardInputSource.h"
 
 
 void setup() ;

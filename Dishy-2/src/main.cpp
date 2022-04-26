@@ -6,10 +6,6 @@
  */
 #include "environment.h"
 
-#ifndef MCU_ENV
-#include <iostream>
-using namespace std;
-#endif
 
 #ifdef MCU_ENV
 //#include ""
@@ -32,6 +28,8 @@ void dispatchEvent(unique_ptr<InputEvent> &pInputEvent);
 bool isValidInput(unique_ptr<InputEvent> &pInputEvent);
 
 
+unique_ptr<InputSource> inputSrc;
+
 void setup()
 {
 #ifdef MCU_ENV
@@ -40,6 +38,9 @@ void setup()
 	pinMode(LED_BUILTIN, OUTPUT);
 	Serial.println("Welcome!");
 #endif
+
+	inputSrc = make_unique<KeyboardInputSource>();
+
 }
 
 //============================
@@ -58,7 +59,7 @@ void loop()
 	{ // memory tracking block
 		char input = '\0';
 
-		input = readInput();
+		input = inputSrc->readInput();
 
 		unique_ptr<InputEvent> pInputEvent = getEventForInput(input);
 
@@ -74,6 +75,7 @@ void loop()
 
 bool isValidInput(unique_ptr<InputEvent> &pInputEvent)
 {
+//	LOG_DEBUG_LN("=======>%s<========\n", pInputEvent->toString().c_str());
 	bool result = true;
 	if (pInputEvent->getId() == InputEvent::invalidEvent && pInputEvent->getData() == 'x')
 	{
@@ -82,7 +84,7 @@ bool isValidInput(unique_ptr<InputEvent> &pInputEvent)
 	}
 	else if (pInputEvent->getId() == InputEvent::invalidEvent)
 	{
-		LOG_DEBUG("Invalid input " << pInputEvent->getData() << endl);
+		LOG_DEBUG_LN("Invalid input <%c>\n", pInputEvent->getData() );
 		result = false;
 	}
 	return result;
@@ -94,11 +96,11 @@ void dispatchEvent(unique_ptr<InputEvent> &pInputEvent)
 
 	pAction = getAction(pInputEvent);
 
-	LOG_DEBUG("------------------" << endl);
+	LOG_DEBUG_LN("------------------\n");
 	int actionResult = pAction->run();
+	LOG_DEBUG_LN( "Action result: %i \n", actionResult);
 	delete pAction;
-	LOG_DEBUG( "Action result:" << actionResult << endl);
-	LOG_DEBUG("------------------" << endl);
+	LOG_DEBUG_LN("------------------\n");
 }
 
 // caller must free Action memory.
@@ -135,7 +137,6 @@ Action* getAction(unique_ptr<InputEvent> &event)
 	default:
 		singleAction = unique_ptr<Action>(new NullAction(2, event));
 		newActionGrp = new ActionGroup(-10, -1, singleAction, group2Desc);
-		LOG_DEBUG("NEW ACTION:" << newActionGrp->toString());
 		break;
 	}
 	singleAction.reset();
@@ -169,23 +170,23 @@ void assertNoMemoryLeak()
 {
 	if (ActionGroup::instanceCount > 0)
 	{
-		LOG_DEBUG( "**** MEMORY LEAK - ActionGroup instance count != 0, Actual:[" << ActionGroup::instanceCount << "]" << endl);
+		LOG_DEBUG_LN( "**** MEMORY LEAK - ActionGroup instance count != 0, Actual:[%i]\n" ,ActionGroup::instanceCount );
 	}
 	if (BaseAction::instanceCount > 0)
 	{
-		LOG_DEBUG( "**** MEMORY LEAK - BaseAction instance count != 0, Actual:[" << BaseAction::instanceCount << "]" << endl);
+		LOG_DEBUG_LN( "**** MEMORY LEAK - BaseAction instance count != 0, Actual:[%i]\n" ,BaseAction::instanceCount );
 	}
 
 	if (InputEvent::instanceCount > 0)
 	{
-		LOG_DEBUG("**** MEMORY LEAK - InputEvent instance count != 0, Actual:[" << InputEvent::instanceCount << "]" << endl);
+		LOG_DEBUG_LN( "**** MEMORY LEAK - InputEvent instance count != 0, Actual:[%i]\n" ,InputEvent::instanceCount );
 	}
 	assert(BaseAction::instanceCount == 0);
 }
 
 void doExit()
 {
-	LOG_DEBUG("all done!" << endl);
+	LOG_DEBUG_LN("all done!\n");
 	assertNoMemoryLeak();
 	exit(0);
 }

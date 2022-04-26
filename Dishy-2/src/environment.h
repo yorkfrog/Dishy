@@ -20,22 +20,27 @@
 #ifndef ENVIRONMENT_H_
 #define ENVIRONMENT_H_
 
+//#include "Arduino.h"
+
+/*
+ * To set per build config in Sloeber, set in :
+ *     Proj properties | Arduino | Compile Options | append to C/C++
+ */
 //#define LOCAL_ENV 100
-#define MCU_ENV 200
+//#define MCU_ENV 200
 //#define TEST_ENV 300
 
+#define DEBUG
 
 // define this to allow debug logging in code.
-#define DEBUG_OUT
-
 #ifdef LOCAL_ENV
-#ifdef DEBUG_OUT
-#define LOG_DEBUG(...) cout << __VA_ARGS__
+#define DEBUG_OUT
 #endif
-#endif //LOCAL_ENV
 
-#ifndef LOG_DEBUG
-#define LOG_DEBUG(...)
+#ifdef DEBUG_OUT
+#define LOG_DEBUG_LN(...) printf( __VA_ARGS__ )
+#else
+#define LOG_DEBUG_LN(...)
 #endif
 
 

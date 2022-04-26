@@ -6,9 +6,6 @@
  */
 //#define DEBUG
 
-//#include <iostream>
-//#include <sstream>
-
 // define NDEBUG to turn off assert()
 //#define NDEBUG
 
@@ -35,7 +32,7 @@ BaseAction::BaseAction(int id, unique_ptr<InputEvent> &event) {
 	_description = "";
 
 #ifdef DEBUG
-	cout << "   # ACTION contructor (" << this << "), id:" << (int)_pEvent->getId() << endl;
+	LOG_DEBUG_LN("    # ACTION constructor [%#lx] id:%i\n", this , (int)_pEvent->getId() );
 #endif
 }
 
@@ -46,8 +43,8 @@ BaseAction::BaseAction(const BaseAction& other) {
 //	_pEvent = new InputEvent(*(other._pEvent.get()));
 	_description = other._description;
 
-	#ifdef DEBUG
-	cout << "   # ACTION COPY contructor, from (" << &other << "), to (" << this << "), id:" << (int)other._pEvent->getId() << endl;
+#ifdef DEBUG
+	LOG_DEBUG_LN("    # ACTION COPY constructor, from [%#lx] to [%#lx], id:%i\n", &other , this , (int)other._pEvent->getId() );
 #endif
 
 }
@@ -55,7 +52,7 @@ BaseAction::BaseAction(const BaseAction& other) {
 
 
 BaseAction& BaseAction::operator=(const BaseAction &other) {
-	LOG_DEBUG("# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl);
+	LOG_DEBUG_LN("    # BaseAction Oper= from [%#lx] to [%#lx]\n", &other , this);
 	if (this != &other) { // protect against invalid self-assignment
 		// 1: allocate new memory and copy the elements
 		shared_ptr<InputEvent> pNewEvent = make_shared<InputEvent>(*(other._pEvent.get()) ) ;
@@ -80,7 +77,7 @@ BaseAction::~BaseAction() {
 //	delete _pEvent;
 //	_pEvent = NULL;
 #ifdef DEBUG
-	cout << "   # ACTION destructor on (" << this << "::[" << instanceCount << "]), id:" << _pEvent->getId() << endl;
+	LOG_DEBUG_LN("    # ACTION destructor on [%#lx], id:%i\n" , this , instanceCount);
 #endif
 }
 
@@ -107,33 +104,5 @@ string BaseAction::toString() const {
 	return ss.str();
 }
 
-
-/*
-#if defined LOCAL_ENV
-int BaseAction::run() {
-	cout << "run Action for " << (_isValid?_event->toString():"INVALID") << endl;
-
-	if (! _isValid) {
-		// invalid
-		return -1;
-	}
-
-	// do run()
-	return 0;
-}
-
-#elif defined MCU_ENV
-
-int BaseAction::run() {
-	cout << "run **MCU** Action for " << _event->toString() << endl;
-
-	return 0;ActionGroup
-}
-
-
-#elif defined TEST_ENV
-
-#endif
-*/
 
 

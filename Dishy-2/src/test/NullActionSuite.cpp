@@ -170,6 +170,7 @@ TEST_F(NullActionTest, noActionConstructionMemoryLeak)
 	EXPECT_EQ(0, NullAction::instanceCount);
 }
 
+/*
 TEST_F(NullActionTest, testStatic)
 {
 	// the Test Fixture creates an InputEvent instance which we won;t use.
@@ -195,6 +196,7 @@ TEST_F(NullActionTest, testStatic)
 	EXPECT_EQ(1, InputEvent::instanceCount);
 	EXPECT_EQ(0, NullAction::instanceCount);
 }
+*/
 
 TEST_F(NullActionTest, clone)
 {

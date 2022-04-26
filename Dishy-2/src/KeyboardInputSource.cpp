@@ -2,23 +2,27 @@
  *  Created on: Nov 27, 2015
  *      Author: jan
  */
-#include "KeyboardInput.h"
+#include "KeyboardInputSource.h"
+
+KeyboardInputSource::~KeyboardInputSource()
+{
+#ifdef DEBUG
+	LOG_DEBUG_LN("      # KeyboardInputSource destructor on [%#lx]\n" , this);
+#endif
+}
 
 #ifdef LOCAL_ENV
 //===========================
 // Read INPUT on Local system
 //===========================
-char readInput() {
-	char chr;
-	char cr;
+char KeyboardInputSource::readInput() {
 	printf("Enter a character: ");
-//	scanf("%c%c",&chr, &cr);
 	string input;
 	cin >> input;
 
 //	printf("You entered %c.\n", chr);
 
-	cout << "You entered " << input << endl;
+	printf("Entered >>> [%s]\n", input.c_str());
 	return input.at(0); //chr;
 }
 
@@ -30,7 +34,7 @@ char readInput() {
 //===========================
 // Read INPUT on MCU
 //===========================
-char readInput()
+char KeyboardInputSource::readInput()
 {
 	char chr;
 	Serial.print("Enter a character: ");
@@ -40,10 +44,18 @@ char readInput()
 	while (Serial.available() == 0)
 		;
 	chr = Serial.read();
-	Serial.printf("Entered >>> [%i][%c]\n", chr, chr);
+	Serial.	printf("Entered >>> %c [%i]\n", chr, chr);
 
 	return chr;
 }
 
 #endif
 
+#ifdef TEST_ENV
+
+char KeyboardInputSource::readInput()
+{
+	return 'a';
+}
+
+#endif

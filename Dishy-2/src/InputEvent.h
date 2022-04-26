@@ -10,14 +10,8 @@
 
 #include "environment.h"
 
-#ifndef MCU_ENV
 #include <cstdint>
-#include <iostream>
-#endif
-
-#ifdef MCU_ENV
 #include <string>
-#endif
 
 using namespace std;
 

@@ -9,7 +9,6 @@
 #define TOGGLELEDACTION_H_
 
 #include "BaseAction.h"
-//#include "InputEvent.h"
 
 
 class ToggleLedAction: public virtual Action, public BaseAction

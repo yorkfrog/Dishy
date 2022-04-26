@@ -5,8 +5,6 @@
  *      Author: colin
  */
 //#define DEBUG
-//#include <iostream>
-//using namespace std;
 
 #include "Arduino.h"
 #include "ToggleLedAction.h"
@@ -23,14 +21,14 @@ static unique_ptr<ToggleLedAction> ToggleLedAction::build()
 ToggleLedAction::ToggleLedAction(int id, unique_ptr<InputEvent> &event): BaseAction(id, event)
 {
 #ifdef DEBUG
-	cout << "   # ToggleLedAction contructor (" << this << "), id:" << event->getId() << endl;
+	LOG_DEBUG_LN("      # ToggleLedAction constructor [%#lx] id:%i\n", this , event->getId() );
 #endif
 }
 
 ToggleLedAction::ToggleLedAction(const ToggleLedAction &other) : BaseAction(other)
 {
 #ifdef DEBUG
-	cout << "   # ToggleLedAction  COPY contructor, from (" << &other << "), to (" << this << ")" << endl;
+	LOG_DEBUG_LN("      # ToggleLedAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this  );
 #endif
 
 }
@@ -38,7 +36,7 @@ ToggleLedAction::ToggleLedAction(const ToggleLedAction &other) : BaseAction(othe
 ToggleLedAction::~ToggleLedAction()
 {
 #ifdef DEBUG
-	cout << "   # ToggleLedAction destructor on (" << this << ")" << endl;
+	LOG_DEBUG_LN("      # ToggleLedAction destructor on [%#lx]\n" , this);
 #endif
 }
 
@@ -49,8 +47,10 @@ Action* ToggleLedAction::clone() const
 
 int ToggleLedAction::run()
 {
-	LOG_DEBUG("run ToggleLedAction" << "::" << this->toString() << endl);
-	int newState = !digitalRead(LED_BUILTIN);
+	LOG_DEBUG_LN("run ToggleLedAction...\n" );
+//	LOG_DEBUG_LN("run ToggleLedAction::%s\n", this->toString() );
+	int newState = 0;
+	newState = !digitalRead(LED_BUILTIN);
 	digitalWrite(LED_BUILTIN, newState );
 	return newState ;
 }

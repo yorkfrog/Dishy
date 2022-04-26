@@ -10,14 +10,12 @@
 //#define NDEBUG
 #include <assert.h>
 
+#define DEBUG
 
 #include "environment.h"
 
-#ifndef MCU_ENV
-#include <iostream>
-#endif
-using namespace std;
 #include <sstream>
+using namespace std;
 
 #include "ActionGroup.h"
 
@@ -33,7 +31,7 @@ ActionGroup::ActionGroup(int id, int maxActions, string desc)
 	_description = desc;
 
 #ifdef DEBUG
-	cout << "   # DEF ActionGroup constructor (" << this << ")" << endl;
+	LOG_DEBUG_LN("  # DEF ActionGroup constructor (%#lx)\n", this );
 #endif
 }
 
@@ -50,7 +48,7 @@ ActionGroup::ActionGroup(int id, int maxActions, unique_ptr<Action> &action, str
 	_maxActions = maxActions;
 	_description = desc;
 #ifdef DEBUG
-	cout << "   # ActionGroup A constructor (" << this << ")" << endl;
+	LOG_DEBUG_LN("  # ActionGroup constructor (%#lx)\n", this );
 #endif
 }
 
@@ -64,13 +62,13 @@ ActionGroup::ActionGroup(const ActionGroup &other)
 	_maxActions = other._maxActions;
 	_description = other._description;
 #ifdef DEBUG
-	cout << "   # ActionGroup  COPY constructor, from (" << &other << "), to (" << this << ")" << endl;
+	LOG_DEBUG_LN("  # ActionGroup  COPY constructor, from (%#lx) to (%#lx)\n", &other, this );
 #endif
 }
 
 ActionGroup& ActionGroup::operator=(const ActionGroup &other) {
 
-	LOG_DEBUG("# BaseAction Oper= from [" << &other << "] to [" << this << "]" << endl);
+	LOG_DEBUG_LN("  # ActionGroup Oper= from [%#lx] to [%#lx]\n", &other, this);
 	if (this != &other) { // protect against invalid self-assignment
 		// 1: allocate new memory and copy the elements
 		shared_ptr<Action> pNewAction = shared_ptr<Action>((other._pTheAction.get())->clone());
@@ -94,7 +92,7 @@ ActionGroup::~ActionGroup()
 {
 	_pTheAction.reset();
 #ifdef DEBUG
-	cout << "   # ActionGroup destructor on (" << this << ")" << endl;
+	LOG_DEBUG_LN("  # ActionGroup destructor on (%#lx)\n", this);
 #endif
 	instanceCount--;
 }
@@ -133,7 +131,7 @@ string ActionGroup::toString() const
 
 int ActionGroup::run()
 {
-	LOG_DEBUG("run " << toString() << " " << _pTheAction << endl);
+	LOG_DEBUG_LN("run [%s %#lx]\n", toString().c_str(), _pTheAction );
 	return _pTheAction->run();
 }
 

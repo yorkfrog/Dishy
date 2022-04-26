@@ -8,10 +8,6 @@
 
 #include "environment.h"
 
-#ifndef MCU_ENV
-#include <iostream>
-#endif
-
 using namespace std;
 
 #include "NullAction.h"
@@ -28,14 +24,14 @@ static unique_ptr<NullAction> NullAction::build()
 NullAction::NullAction(int id, unique_ptr<InputEvent> &event): BaseAction(id, event)
 {
 #ifdef DEBUG
-	cout << "   # NullAction contructor (" << this << "), id:" << event->getId() << endl;
+	LOG_DEBUG_LN("      # NullAction constructor [%#lx] id:%i\n", this , event->getId() );
 #endif
 }
 
 NullAction::NullAction(const NullAction &other) : BaseAction(other)
 {
 #ifdef DEBUG
-	cout << "   # NullAction  COPY contructor, from (" << &other << "), to (" << this << ")" << endl;
+	LOG_DEBUG_LN("      # NullAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this  );
 #endif
 
 }
@@ -43,7 +39,7 @@ NullAction::NullAction(const NullAction &other) : BaseAction(other)
 NullAction::~NullAction()
 {
 #ifdef DEBUG
-	cout << "   # NullAction destructor on (" << this << ")" << endl;
+	LOG_DEBUG_LN("      # NullAction destructor on [%#lx]\n" , this);
 #endif
 }
 

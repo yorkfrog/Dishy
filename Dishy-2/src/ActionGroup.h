@@ -12,9 +12,6 @@
 
 #include "environment.h"
 
-#ifndef MCU_ENV
-#include <iostream>
-#endif
 #include <memory>
 
 #include "Action.h"
