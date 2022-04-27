@@ -1,5 +1,5 @@
 /*
- * ToggleLedAction.h
+ * ToggleToggleLedAction.h
  *
  *  Created on: 19 Apr 2022
  *      Author: colin
@@ -15,7 +15,7 @@ class ToggleLedAction: public virtual Action, public BaseAction
 {
 /*
 public:
-	static unique_ptr<ToggleLedAction> build();
+	static unique_ptr<ToggleToggleLedAction> build();
 */
 
 public:

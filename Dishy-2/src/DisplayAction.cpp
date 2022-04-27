@@ -15,7 +15,7 @@ DisplayAction::DisplayAction(int id, int buttonNum, unique_ptr<InputEvent> &even
 
 {
 #ifdef DEBUG
-	LOG_DEBUG_LN("      # DisplayAction constructor [%#lx] id:%i\n", this , event->getId() );
+	LOG_DEBUG_MEM("      # DisplayAction constructor [%#lx] id:%i\n", this , event->getId() );
 #endif
 	_buttonNumber = buttonNum;
 }
@@ -23,7 +23,7 @@ DisplayAction::DisplayAction(int id, int buttonNum, unique_ptr<InputEvent> &even
 DisplayAction::DisplayAction(const DisplayAction &other) : BaseAction(other)
 {
 #ifdef DEBUG
-	LOG_DEBUG_LN("      # DisplayAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this  );
+	LOG_DEBUG_MEM("      # DisplayAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this  );
 #endif
 	_buttonNumber = other._buttonNumber;
 
@@ -32,7 +32,7 @@ DisplayAction::DisplayAction(const DisplayAction &other) : BaseAction(other)
 DisplayAction::~DisplayAction()
 {
 #ifdef DEBUG
-	LOG_DEBUG_LN("      # DisplayAction destructor on [%#lx]\n" , this);
+	LOG_DEBUG_MEM("      # DisplayAction destructor on [%#lx]\n" , this);
 #endif
 }
 
@@ -45,7 +45,7 @@ Action* DisplayAction::clone() const
 int DisplayAction::run()
 {
 #ifndef MCU_ENV
-	LOG_DEBUG_LN("run DisplayAction::%s\n" , this->toString());
+	LOG_DEBUG_MEM("run DisplayAction::%s\n" , this->toString());
 #endif
 
 	return 0;

@@ -14,17 +14,17 @@
 int InputEvent::instanceCount = 0;
 
 InputEvent::InputEvent(int8_t id, char data): _id(id), _data(data) {
-	LOG_DEBUG_LN("         # InputEvent constructor [%#lx], id:%i, data:%c\n", this , _id , _data );
+	LOG_DEBUG_MEM("         # InputEvent constructor [%#lx], id:%i, data:%c\n", this , _id , _data );
 	instanceCount++;
 }
 
 InputEvent::InputEvent(const InputEvent &other): _id(other._id), _data(other._data) {
-	LOG_DEBUG_LN("         # COPY InputEvent constructor from [%#lx] to [%#lx], id:%i\n", &other , this , _id );
+	LOG_DEBUG_MEM("         # COPY InputEvent constructor from [%#lx] to [%#lx], id:%i\n", &other , this , _id );
 	instanceCount++;
 }
 
 InputEvent::~InputEvent() {
-	LOG_DEBUG_LN("         # InputEvent destructor on [%#lx], id:%i\n", this , _id );
+	LOG_DEBUG_MEM("         # InputEvent destructor on [%#lx], id:%i\n", this , _id );
 	instanceCount--;
 }
 

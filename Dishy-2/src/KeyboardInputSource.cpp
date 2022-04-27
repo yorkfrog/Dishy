@@ -7,7 +7,7 @@
 KeyboardInputSource::~KeyboardInputSource()
 {
 #ifdef DEBUG
-	LOG_DEBUG_LN("      # KeyboardInputSource destructor on [%#lx]\n" , this);
+	LOG_DEBUG_MEM("      # KeyboardInputSource destructor on [%#lx]\n" , this);
 #endif
 }
 
@@ -15,7 +15,7 @@ KeyboardInputSource::~KeyboardInputSource()
 //===========================
 // Read INPUT on Local system
 //===========================
-char KeyboardInputSource::readInput() {
+uint8_t KeyboardInputSource::readInput() {
 	printf("Enter a character: ");
 	string input;
 	cin >> input;
@@ -34,7 +34,7 @@ char KeyboardInputSource::readInput() {
 //===========================
 // Read INPUT on MCU
 //===========================
-char KeyboardInputSource::readInput()
+uint8_t KeyboardInputSource::readInput()
 {
 	char chr;
 	Serial.print("Enter a character: ");
@@ -53,7 +53,7 @@ char KeyboardInputSource::readInput()
 
 #ifdef TEST_ENV
 
-char KeyboardInputSource::readInput()
+uint8_t KeyboardInputSource::readInput()
 {
 	return 'a';
 }

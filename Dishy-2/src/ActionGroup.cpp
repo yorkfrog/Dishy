@@ -31,7 +31,7 @@ ActionGroup::ActionGroup(int id, int maxActions, string desc)
 	_description = desc;
 
 #ifdef DEBUG
-	LOG_DEBUG_LN("  # DEF ActionGroup constructor (%#lx)\n", this );
+	LOG_DEBUG_MEM("  # DEF ActionGroup constructor (%#lx)\n", this );
 #endif
 }
 
@@ -48,7 +48,7 @@ ActionGroup::ActionGroup(int id, int maxActions, unique_ptr<Action> &action, str
 	_maxActions = maxActions;
 	_description = desc;
 #ifdef DEBUG
-	LOG_DEBUG_LN("  # ActionGroup constructor (%#lx)\n", this );
+	LOG_DEBUG_MEM("  # ActionGroup constructor (%#lx)\n", this );
 #endif
 }
 
@@ -62,13 +62,13 @@ ActionGroup::ActionGroup(const ActionGroup &other)
 	_maxActions = other._maxActions;
 	_description = other._description;
 #ifdef DEBUG
-	LOG_DEBUG_LN("  # ActionGroup  COPY constructor, from (%#lx) to (%#lx)\n", &other, this );
+	LOG_DEBUG_MEM("  # ActionGroup  COPY constructor, from (%#lx) to (%#lx)\n", &other, this );
 #endif
 }
 
 ActionGroup& ActionGroup::operator=(const ActionGroup &other) {
 
-	LOG_DEBUG_LN("  # ActionGroup Oper= from [%#lx] to [%#lx]\n", &other, this);
+	LOG_DEBUG_MEM("  # ActionGroup Oper= from [%#lx] to [%#lx]\n", &other, this);
 	if (this != &other) { // protect against invalid self-assignment
 		// 1: allocate new memory and copy the elements
 		shared_ptr<Action> pNewAction = shared_ptr<Action>((other._pTheAction.get())->clone());
@@ -92,7 +92,7 @@ ActionGroup::~ActionGroup()
 {
 	_pTheAction.reset();
 #ifdef DEBUG
-	LOG_DEBUG_LN("  # ActionGroup destructor on (%#lx)\n", this);
+	LOG_DEBUG_MEM("  # ActionGroup destructor on (%#lx)\n", this);
 #endif
 	instanceCount--;
 }
@@ -131,7 +131,7 @@ string ActionGroup::toString() const
 
 int ActionGroup::run()
 {
-	LOG_DEBUG_LN("run [%s %#lx]\n", toString().c_str(), _pTheAction );
+	LOG_DEBUG_MEM("run [%s %#lx]\n", toString().c_str(), _pTheAction );
 	return _pTheAction->run();
 }
 

@@ -24,7 +24,7 @@ class KeyboardInputSource:  public virtual InputSource
 {
 public:
 
-	char readInput();
+	uint8_t readInput();
 	virtual ~KeyboardInputSource();
 };
 #endif /* KEYBOARDINPUTSOURCE_H_ */

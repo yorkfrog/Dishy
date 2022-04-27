@@ -6,7 +6,6 @@
  */
 #include "environment.h"
 
-
 #ifdef MCU_ENV
 //#include ""
 #endif
@@ -14,7 +13,9 @@
 #include "main.h"
 //#include "stdio.h"
 
+#include "LedAction.h"
 #include "ToggleLedAction.h"
+#include "SimpleButtonInputSource.h"
 
 // enable NDEBUG to disable assert()
 #define NDEBUG
@@ -25,8 +26,6 @@
 void doExit();
 void assertNoMemoryLeak();
 void dispatchEvent(unique_ptr<InputEvent> &pInputEvent);
-bool isValidInput(unique_ptr<InputEvent> &pInputEvent);
-
 
 unique_ptr<InputSource> inputSrc;
 
@@ -34,21 +33,30 @@ void setup()
 {
 #ifdef MCU_ENV
 	// open the serial port:
-	Serial.begin(9600);
+	Serial.begin(57600);
 	pinMode(LED_BUILTIN, OUTPUT);
-	Serial.println("Welcome!");
+
 #endif
 
+#ifdef MCU_ENV
+	// add button input src
+//	inputSrc = make_unique<KeyboardInputSource>();
+	inputSrc = make_unique<SimpleButtonInputSource>(D2, "button1");
+	inputSrc->setUp();
+#else
 	inputSrc = make_unique<KeyboardInputSource>();
+#endif
+
+	delay(500);  // wait for serial to connect;
+	Serial.println("Welcome!");
 
 }
 
 //============================
 
 /*
+ * - def Button input scr for MCU
  * TODO 1 - add actions to array in ActionGroup
- * TODO 2 - learn about smart pointers
- * TODO 3 - convert to smart pointers
  * TODO 4 - add local Git repo's to remote.
  * TODO Go to NFT's
  */
@@ -57,15 +65,20 @@ void loop()
 {
 
 	{ // memory tracking block
-		char input = '\0';
-
-		input = inputSrc->readInput();
-
-		unique_ptr<InputEvent> pInputEvent = getEventForInput(input);
-
-		if (isValidInput(pInputEvent))
+		uint8_t input = inputSrc->readInput();
+		if (inputSrc->hasChanged())
 		{
-			dispatchEvent(pInputEvent);
+			unique_ptr<InputEvent> pInputEvent = getEventForInput(input);
+
+			if (pInputEvent->getData() == 'x')
+			{
+				doExit();
+			}
+
+			if (pInputEvent->getId() != InputEvent::invalidEvent)
+			{
+				dispatchEvent(pInputEvent);
+			}
 		}
 	}
 
@@ -73,22 +86,6 @@ void loop()
 
 }
 
-bool isValidInput(unique_ptr<InputEvent> &pInputEvent)
-{
-//	LOG_DEBUG_LN("=======>%s<========\n", pInputEvent->toString().c_str());
-	bool result = true;
-	if (pInputEvent->getId() == InputEvent::invalidEvent && pInputEvent->getData() == 'x')
-	{
-		//pInputEvent.reset();
-		doExit();
-	}
-	else if (pInputEvent->getId() == InputEvent::invalidEvent)
-	{
-		LOG_DEBUG_LN("Invalid input <%c>\n", pInputEvent->getData() );
-		result = false;
-	}
-	return result;
-}
 
 void dispatchEvent(unique_ptr<InputEvent> &pInputEvent)
 {
@@ -96,11 +93,11 @@ void dispatchEvent(unique_ptr<InputEvent> &pInputEvent)
 
 	pAction = getAction(pInputEvent);
 
-	LOG_DEBUG_LN("------------------\n");
+	//LOG_DEBUG("------------------\n");
 	int actionResult = pAction->run();
-	LOG_DEBUG_LN( "Action result: %i \n", actionResult);
+	LOG_DEBUG("Action result: %i \n", actionResult);
 	delete pAction;
-	LOG_DEBUG_LN("------------------\n");
+	//LOG_DEBUG("------------------\n");
 }
 
 // caller must free Action memory.
@@ -117,7 +114,8 @@ Action* getAction(unique_ptr<InputEvent> &event)
 
 	switch (event->getId()) {
 	case InputEvent::btn1pressEvent:
-		singleAction = unique_ptr<Action>(new ToggleLedAction(1, event));
+		singleAction = unique_ptr<Action>(new LedAction(1, event));
+//		singleAction = unique_ptr<Action>(new ToggleLedAction(1, event));
 		newActionGrp = new ActionGroup(100, 10, singleAction, "Group1");
 		break;
 	case InputEvent::btn2pressEvent:
@@ -146,8 +144,14 @@ Action* getAction(unique_ptr<InputEvent> &event)
 // caller must free InputEvent memory.
 unique_ptr<InputEvent> getEventForInput(char input)
 {
-	int eventType = InputEvent::invalidEvent;
+	int eventType ;
 	switch (input) {
+	case LOW:
+		eventType = InputEvent::btn1pressEvent;
+		break;
+	case HIGH:
+		eventType = InputEvent::btn1pressEvent;
+		break;
 	case '1':
 		eventType = InputEvent::btn1pressEvent;
 		break;
@@ -161,6 +165,7 @@ unique_ptr<InputEvent> getEventForInput(char input)
 		eventType = InputEvent::btn4pressEvent;
 		break;
 	default:
+		eventType = InputEvent::invalidEvent;
 		break;
 	}
 	return make_unique<InputEvent>(eventType, input);
@@ -170,23 +175,23 @@ void assertNoMemoryLeak()
 {
 	if (ActionGroup::instanceCount > 0)
 	{
-		LOG_DEBUG_LN( "**** MEMORY LEAK - ActionGroup instance count != 0, Actual:[%i]\n" ,ActionGroup::instanceCount );
+		LOG_DEBUG_MEM("**** MEMORY LEAK - ActionGroup instance count != 0, Actual:[%i]\n", ActionGroup::instanceCount);
 	}
 	if (BaseAction::instanceCount > 0)
 	{
-		LOG_DEBUG_LN( "**** MEMORY LEAK - BaseAction instance count != 0, Actual:[%i]\n" ,BaseAction::instanceCount );
+		LOG_DEBUG_MEM("**** MEMORY LEAK - BaseAction instance count != 0, Actual:[%i]\n", BaseAction::instanceCount);
 	}
 
 	if (InputEvent::instanceCount > 0)
 	{
-		LOG_DEBUG_LN( "**** MEMORY LEAK - InputEvent instance count != 0, Actual:[%i]\n" ,InputEvent::instanceCount );
+		LOG_DEBUG_MEM("**** MEMORY LEAK - InputEvent instance count != 0, Actual:[%i]\n", InputEvent::instanceCount);
 	}
 	assert(BaseAction::instanceCount == 0);
 }
 
 void doExit()
 {
-	LOG_DEBUG_LN("all done!\n");
+	LOG_DEBUG("all done!\n");
 	assertNoMemoryLeak();
 	exit(0);
 }

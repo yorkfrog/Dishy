@@ -24,14 +24,14 @@ static unique_ptr<NullAction> NullAction::build()
 NullAction::NullAction(int id, unique_ptr<InputEvent> &event): BaseAction(id, event)
 {
 #ifdef DEBUG
-	LOG_DEBUG_LN("      # NullAction constructor [%#lx] id:%i\n", this , event->getId() );
+	LOG_DEBUG_MEM("      # NullAction constructor [%#lx] id:%i\n", this , event->getId() );
 #endif
 }
 
 NullAction::NullAction(const NullAction &other) : BaseAction(other)
 {
 #ifdef DEBUG
-	LOG_DEBUG_LN("      # NullAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this  );
+	LOG_DEBUG_MEM("      # NullAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this  );
 #endif
 
 }
@@ -39,7 +39,7 @@ NullAction::NullAction(const NullAction &other) : BaseAction(other)
 NullAction::~NullAction()
 {
 #ifdef DEBUG
-	LOG_DEBUG_LN("      # NullAction destructor on [%#lx]\n" , this);
+	LOG_DEBUG_MEM("      # NullAction destructor on [%#lx]\n" , this);
 #endif
 }
 

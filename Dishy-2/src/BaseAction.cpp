@@ -32,7 +32,7 @@ BaseAction::BaseAction(int id, unique_ptr<InputEvent> &event) {
 	_description = "";
 
 #ifdef DEBUG
-	LOG_DEBUG_LN("    # ACTION constructor [%#lx] id:%i\n", this , (int)_pEvent->getId() );
+	LOG_DEBUG_MEM("    # ACTION constructor [%#lx] id:%i\n", this , (int)_pEvent->getId() );
 #endif
 }
 
@@ -44,7 +44,7 @@ BaseAction::BaseAction(const BaseAction& other) {
 	_description = other._description;
 
 #ifdef DEBUG
-	LOG_DEBUG_LN("    # ACTION COPY constructor, from [%#lx] to [%#lx], id:%i\n", &other , this , (int)other._pEvent->getId() );
+	LOG_DEBUG_MEM("    # ACTION COPY constructor, from [%#lx] to [%#lx], id:%i\n", &other , this , (int)other._pEvent->getId() );
 #endif
 
 }
@@ -52,7 +52,7 @@ BaseAction::BaseAction(const BaseAction& other) {
 
 
 BaseAction& BaseAction::operator=(const BaseAction &other) {
-	LOG_DEBUG_LN("    # BaseAction Oper= from [%#lx] to [%#lx]\n", &other , this);
+	LOG_DEBUG_MEM("    # BaseAction Oper= from [%#lx] to [%#lx]\n", &other , this);
 	if (this != &other) { // protect against invalid self-assignment
 		// 1: allocate new memory and copy the elements
 		shared_ptr<InputEvent> pNewEvent = make_shared<InputEvent>(*(other._pEvent.get()) ) ;
@@ -77,7 +77,7 @@ BaseAction::~BaseAction() {
 //	delete _pEvent;
 //	_pEvent = NULL;
 #ifdef DEBUG
-	LOG_DEBUG_LN("    # ACTION destructor on [%#lx], id:%i\n" , this , instanceCount);
+	LOG_DEBUG_MEM("    # ACTION destructor on [%#lx], id:%i\n" , this , instanceCount);
 #endif
 }
 
@@ -100,7 +100,7 @@ shared_ptr<InputEvent> BaseAction::getEvent() const {
 
 string BaseAction::toString() const {
 	stringstream ss ;
-	ss << "BaseAction[event id:" << (int)_pEvent->getId() << "]";
+	ss << "BaseAction[event id:" << _pEvent->getId() << "]";
 	return ss.str();
 }
 

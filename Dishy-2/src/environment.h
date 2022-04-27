@@ -33,14 +33,21 @@
 #define DEBUG
 
 // define this to allow debug logging in code.
+#define DEBUG_OUT
 #ifdef LOCAL_ENV
 #define DEBUG_OUT
 #endif
 
 #ifdef DEBUG_OUT
-#define LOG_DEBUG_LN(...) printf( __VA_ARGS__ )
+#define LOG_DEBUG(...) printf( __VA_ARGS__ )
 #else
-#define LOG_DEBUG_LN(...)
+#define LOG_DEBUG(...)
+#endif
+
+#ifdef DEBUG_MEM_OUT
+#define LOG_DEBUG_MEM(...) printf( __VA_ARGS__ )
+#else
+#define LOG_DEBUG_MEM(...)
 #endif
 
 
