@@ -25,9 +25,9 @@
 
 void setup() ;
 void loop();
-unique_ptr<InputEvent> getEventForInput(char input);
+unique_ptr<InputEvent> getEventForInput(uint8_t input);
 
-Action*  getAction(unique_ptr<InputEvent> &event);
+unique_ptr<Action>  getAction(unique_ptr<InputEvent> &event);
 
 
 #endif /* MAIN_H_ */

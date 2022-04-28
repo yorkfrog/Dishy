@@ -7,7 +7,7 @@
 #define KEYBOARDINPUTSOURCE_H_
 
 #include "environment.h"
-
+#include <string>
 #include "InputSource.h"
 
 #ifdef MCU_ENV
@@ -17,14 +17,18 @@
 #ifdef LOCAL_ENV
 #include <iostream>
 #include "stdio.h"
-using namespace std;
 #endif
+using namespace std;
 
 class KeyboardInputSource:  public virtual InputSource
 {
 public:
 
+	KeyboardInputSource(string prompt);
 	uint8_t readInput();
 	virtual ~KeyboardInputSource();
+
+private:
+	string _prompt;
 };
 #endif /* KEYBOARDINPUTSOURCE_H_ */

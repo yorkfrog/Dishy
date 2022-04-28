@@ -11,12 +11,17 @@ KeyboardInputSource::~KeyboardInputSource()
 #endif
 }
 
+KeyboardInputSource::KeyboardInputSource(string prompt) {
+	_prompt = prompt;
+}
+
+
 #ifdef LOCAL_ENV
 //===========================
 // Read INPUT on Local system
 //===========================
 uint8_t KeyboardInputSource::readInput() {
-	printf("Enter a character: ");
+	printf("%s: ", _prompt.c_str());
 	string input;
 	cin >> input;
 

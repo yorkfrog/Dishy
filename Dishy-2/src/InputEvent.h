@@ -25,15 +25,15 @@ public:
 
 public:
 	InputEvent(const InputEvent &other);
-	InputEvent(int8_t id, char data);
+	InputEvent(int8_t id, uint8_t data);
 	virtual ~InputEvent();
 	int getId();
-	char getData();
+	uint8_t getData();
 	string toString() const ;
 
 private:
 	int _id;
-	char _data;
+	uint8_t _data;
 };
 
 #endif /* INPUTEVENT_H_ */

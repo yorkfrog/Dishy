@@ -22,11 +22,13 @@
 #endif
 using namespace std;
 
+static const uint8_t RELEASED = HIGH;
+static const uint8_t PRESSED = LOW;
 
 class SimpleButtonInputSource:  public virtual InputSource
 {
 public:
-	SimpleButtonInputSource(uint8_t buttonPin, string description);
+	SimpleButtonInputSource(uint8_t buttonPin, uint8_t valueWhenPressed, string description);
 	uint8_t readInput();
 	virtual void setUp();
 	virtual bool hasChanged() ;
@@ -34,8 +36,9 @@ public:
 	virtual ~SimpleButtonInputSource();
 
 private:
+	uint8_t _valueWhenPressed = 0;
   bool _stateChanged = false;
-  uint8_t _buttonPin = D2;  // D2 on Lolin D1 Mini
+  uint8_t _buttonPin = 0;  // D2 on Lolin D1 Mini
   uint8_t _buttonState = HIGH;   // the previous reading from the input pin
   uint8_t _lastButtonState = HIGH;   // the previous reading from the input pin
 
@@ -45,5 +48,8 @@ private:
   uint32_t _debounceDelay = 50;    // the debounce time; increase if the output flickers
 
   string _description ;
+
+  uint8_t convertButtonState(uint8_t btnState);
+
 };
 #endif /* SIMPLEBUTTONINPUTSOURCE_H_ */

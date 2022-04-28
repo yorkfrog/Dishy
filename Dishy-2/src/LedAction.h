@@ -19,7 +19,7 @@ public:
 */
 
 public:
-	LedAction(int id, unique_ptr<InputEvent> &event);
+	LedAction(int id, uint8_t ledPin, unique_ptr<InputEvent> &event);
 	LedAction(const LedAction &other);
 
 	virtual ~LedAction();
@@ -27,6 +27,8 @@ public:
 
 	virtual int run();
 
+private:
+	uint8_t _ledPin;
 };
 
 #endif /* LEDACTION_H_ */

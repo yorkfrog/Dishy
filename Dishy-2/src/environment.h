@@ -22,6 +22,10 @@
 
 //#include "Arduino.h"
 
+#ifndef MCU_ENV
+#define D8 8
+#endif
+
 /*
  * To set per build config in Sloeber, set in :
  *     Proj properties | Arduino | Compile Options | append to C/C++
@@ -44,6 +48,7 @@
 #define LOG_DEBUG(...)
 #endif
 
+//#define DEBUG_MEM_OUT
 #ifdef DEBUG_MEM_OUT
 #define LOG_DEBUG_MEM(...) printf( __VA_ARGS__ )
 #else

@@ -50,6 +50,6 @@ Action* NullAction::clone() const
 
 int NullAction::run()
 {
-	printf("run NullAction::%s\n", this->toString());
+	printf("run NullAction::%s\n", this->toString().c_str());
 	return getDescription().length();
 }

@@ -8,7 +8,7 @@
 
 #include "Arduino.h"
 #include "LedAction.h"
-
+#include <assert.h>
 
 /*
 static unique_ptr<LedAction> LedAction::build()
@@ -19,8 +19,10 @@ static unique_ptr<LedAction> LedAction::build()
 }
 */
 
-LedAction::LedAction(int id, unique_ptr<InputEvent> &event): BaseAction(id, event)
+LedAction::LedAction(int id, uint8_t ledPin, unique_ptr<InputEvent> &event) : BaseAction(id, event)
 {
+	assert(ledPin >= 0);
+	_ledPin = ledPin;
 #ifdef DEBUG
 	LOG_DEBUG_MEM("      # LedAction constructor [%#lx] id:%i\n", this , event->getId() );
 #endif
@@ -28,6 +30,7 @@ LedAction::LedAction(int id, unique_ptr<InputEvent> &event): BaseAction(id, even
 
 LedAction::LedAction(const LedAction &other) : BaseAction(other)
 {
+	_ledPin = other._ledPin;
 #ifdef DEBUG
 	LOG_DEBUG_MEM("      # LedAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this  );
 #endif
@@ -55,7 +58,7 @@ int LedAction::run()
 {
 	LOG_DEBUG("run LedAction::%s, d[%i]\n", this->toString().c_str(), this->getEvent()->getData() );
 	int newState = this->getEvent()->getData();
-	digitalWrite(LED_BUILTIN, newState );
-	LOG_DEBUG("[%dl] run LedAction - LED %s\n",millis(), (newState==1?"OFF":"ON") );
+	digitalWrite(_ledPin, newState );
+	LOG_DEBUG("[%dl] run LedAction[%i] - LED %s\n",millis(), _ledPin, (newState==1?"OFF":"ON") );
 	return newState ;
 }

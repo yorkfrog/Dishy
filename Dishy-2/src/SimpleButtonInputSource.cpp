@@ -5,8 +5,9 @@
 #include "SimpleButtonInputSource.h"
 #include "Arduino.h"
 
-SimpleButtonInputSource::SimpleButtonInputSource(uint8_t buttonPin, string description = "button") {
+SimpleButtonInputSource::SimpleButtonInputSource(uint8_t buttonPin, uint8_t valueWhenPressed, string description = "button") {
 	_buttonPin = buttonPin;
+	_valueWhenPressed = valueWhenPressed;
 	_description = description;
 #ifdef DEBUG
 	LOG_DEBUG_MEM("      # SimpleButtonInputSource [%s] C'TOR [%#lx]\n", _description.c_str(), this);
@@ -23,7 +24,7 @@ SimpleButtonInputSource::~SimpleButtonInputSource()
 //===========================
 // Read INPUT on Local system
 //===========================
-char SimpleButtonInputSource::readInput() {
+uint8_t SimpleButtonInputSource::readInput() {
 	printf("Enter a character: ");
 	string input;
 	cin >> input;
@@ -54,8 +55,8 @@ void SimpleButtonInputSource::setUp()
  * Read the de-bouced momentary button state.
  * This function is non-blocking
  * @return:
- *  - LOW  : button pressed
- *  - HIGH : button released
+ *  - valueWhenPressed  : button pressed
+ *  - LOW : button released
  *
  *  Call hasChanged() to determine if the button state has changed on the last read.
  */
@@ -97,8 +98,15 @@ uint8_t SimpleButtonInputSource::readInput()
 //		LOG_DEBUG("   >> [%s] debounced input prev[%i] read[%i] t[%dl]\n", _description.c_str(), _lastButtonState, btnNewState, currentMillis);
 	}
 
-return _buttonState ;
-//	return _stateChanged;
+return convertButtonState(_buttonState) ;
+//return _buttonState ;
+}
+
+uint8_t SimpleButtonInputSource::convertButtonState(uint8_t btnState) {
+	if (PRESSED == btnState) {
+		return _valueWhenPressed;
+	}
+	return LOW;
 }
 
 bool SimpleButtonInputSource::hasChanged()

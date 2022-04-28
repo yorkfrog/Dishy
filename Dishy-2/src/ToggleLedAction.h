@@ -19,7 +19,7 @@ public:
 */
 
 public:
-	ToggleLedAction(int id, unique_ptr<InputEvent> &event);
+	ToggleLedAction(int id, uint8_t ledPin, unique_ptr<InputEvent> &event);
 	ToggleLedAction(const ToggleLedAction &other);
 
 	virtual ~ToggleLedAction();
@@ -27,6 +27,8 @@ public:
 
 	virtual int run();
 
+private:
+	uint8_t _ledPin;
 };
 
 #endif /* TOGGLELEDACTION_H_ */

@@ -7,14 +7,18 @@
 //#define DEBUG
 #include "Arduino.h"
 #include "ToggleLedAction.h"
+#include "assert.h"
 
-ToggleLedAction::ToggleLedAction(int id, unique_ptr<InputEvent> &event) : BaseAction(id, event)
+ToggleLedAction::ToggleLedAction(int id, uint8_t ledPin, unique_ptr<InputEvent> &event) : BaseAction(id, event)
 {
+	assert(ledPin >= 0);
+	_ledPin = ledPin;
 	LOG_DEBUG_MEM("      # ToggleLedAction constructor [%#lx] id:%i\n", this , event->getId() );
 }
 
 ToggleLedAction::ToggleLedAction(const ToggleLedAction &other) : BaseAction(other)
 {
+	_ledPin = other._ledPin;
 	LOG_DEBUG_MEM("      # ToggleLedAction COPY constructor, from [%#lx] to [%#lx]\n", &other , this );
 }
 
@@ -40,9 +44,9 @@ int ToggleLedAction::run()
 	// only trigger when button pressed (not released)
 	if (this->getEvent()->getData() != 0)
 	{
-		newState = !digitalRead(LED_BUILTIN);
-		digitalWrite(LED_BUILTIN, newState);
-		LOG_DEBUG("[%dl] run ToggleLedAction - LED %s\n", millis(), (newState == 1 ? "OFF" : "ON"));
+		newState = !digitalRead(_ledPin);
+		digitalWrite(_ledPin, newState);
+		LOG_DEBUG("[%dl] run ToggleLedAction[%i] - LED %s\n", millis(), _ledPin, (newState == 1 ? "OFF" : "ON"));
 	}
 	return newState;
 }

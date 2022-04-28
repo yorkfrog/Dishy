@@ -13,7 +13,7 @@
 
 int InputEvent::instanceCount = 0;
 
-InputEvent::InputEvent(int8_t id, char data): _id(id), _data(data) {
+InputEvent::InputEvent(int8_t id, uint8_t data): _id(id), _data(data) {
 	LOG_DEBUG_MEM("         # InputEvent constructor [%#lx], id:%i, data:%c\n", this , _id , _data );
 	instanceCount++;
 }
@@ -32,7 +32,7 @@ int InputEvent::getId() {
 	return _id;
 }
 
-char InputEvent::getData() {
+uint8_t InputEvent::getData() {
 	return _data;
 }
 
